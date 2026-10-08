@@ -34,16 +34,25 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 | 4 | `nisa_ideco_calculator.dart` | 未移植 | あり | NISA枠（年120万/240万、生涯1,800万）は制度変更時に要更新。投資の基礎はMVPから除外中のため優先度低 |
 | 5 | `pension_estimator.dart` | **一部移植済み**（`lib/calculators/pension_estimator_calculator.dart`） | あり | 年金額（基礎・厚生）のみ移植。**退職金の概算部分は移植していない**（企業規模別係数2.0/1.5/1.0が公的出典のない独自の仮定値だったため） |
 | 6 | `loan_repayment_simulator.dart` | **移植済み**（`lib/calculators/loan_repayment_calculator.dart`） | なし | 元利均等・元金均等の2方式。金利計算のみで年度依存の定数なし |
-| 7 | `rent_vs_buy_calculator.dart` | 未移植 | 未調査 | MVPから除外候補（既存アプリ共通基盤化候補 v0.1 §9-2） |
-| 8 | `education_cost_planner.dart` | 未移植 | 未調査 | MVPから除外候補 |
-| 9 | `emergency_fund_planner.dart` | 未移植 | 未調査 | MVPから除外候補 |
-| 10 | `insurance_coverage_calculator.dart` | 未移植 | 未調査 | MVPから除外候補 |
+| 7 | `rent_vs_buy_calculator.dart` | **移植済み**（`lib/calculators/rent_vs_buy_calculator.dart`） | なし | 住宅購入vs賃貸の比較。`LoanRepaymentCalculator`に依存。MVPから除外候補（既存アプリ共通基盤化候補 v0.1 §9-2） |
+| 8 | `education_cost_planner.dart` | **移植済み**（`lib/calculators/education_cost_calculator.dart`） | あり（出典不明確） | 段階別・進路別の教育費テーブルがkinnyu側で「文科省調査等を参考」とコメントのみで具体的出典なし。意図的に期限切れにして配信不可。MVPから除外候補 |
+| 9 | `emergency_fund_planner.dart` | **移植済み**（`lib/calculators/emergency_fund_calculator.dart`） | なし | 生活防衛資金の目標額。カバー月数はユーザー入力で制度定数なし。MVPから除外候補 |
+| 10 | `insurance_coverage_calculator.dart` | **移植済み**（`lib/calculators/insurance_coverage_calculator.dart`） | なし | 必要な保険金額の目安。全て入力値ベース。MVPから除外候補 |
 | 11 | `household_simulator.dart` | 移植しない（決定） | - | 世帯機能は切り離し対象（個人情報なし・比較なしの方針と衝突） |
 | 12 | `investment_simulation_pattern.dart` | 移植しない（MVPでは） | - | 投資基礎はMVP除外。仮想運用の扱いは要確認 |
 
+計算12本のうち9本を移植済み（1本は決定により対象外、1本はMVP除外、
+`nisa_ideco_calculator`のみ未調査）。年度依存なしの7本（compound・
+loan_repayment・rent_vs_buy・emergency_fund・insurance_coverage ほか）は
+**即配信可能**。年度依存ありの3本（take_home_pay・furusato_nozei・
+pension_estimator・education_cost）は出典確認まで配信不可。
+
 ## 次の作業（お金 企画設計書 v0.2 §9-3より）
 
-1. **`TakeHomePayCalculator` の定数を実際の出典で確認**（国税庁 所得税速算表・協会けんぽ東京都の料率を2026年度で再確認）し、`Parameter` の `retrievedAt`/`expiresAt` を更新する。確認できれば `FurusatoNozeiCalculator` も連動して配信可能になる
+1. **出典未確認の定数を実際の出典で確認する**（国税庁 所得税速算表・協会けんぽ東京都の料率・
+   日本年金機構の年金額・文部科学省の教育費調査を2026年度で再確認）し、各 `Parameter` の
+   `retrievedAt`/`expiresAt` を更新する。確認できれば `FurusatoNozeiCalculator` も連動して
+   配信可能になる
 2. Question／用語／制度のデータを JSON に分離（出典・lawVersion付き）
 3. 3分レッスン化（MVP 30レッスン、3トラック：手取りと税金・社会保険／家計とライフイベント／お金のトラブル・詐欺）
 
