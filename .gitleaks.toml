@@ -1,0 +1,10 @@
+# gitleaksの既定ルールをそのまま使う。誤検出が出た場合はここに許可リストを追加する。
+# 公開リポジトリ・機微情報非保存の方針（共通基盤設計 v0.5 §8）に基づく。
+title = "choimana_okane gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+  description = "既知の誤検出・テストフィクスチャ"
+  paths = []

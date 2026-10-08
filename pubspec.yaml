@@ -1,0 +1,19 @@
+name: choimana_okane
+description: "ちょいまな お金。資格以外の大人の学び（お金ジャンル）。毎日3分で手取り・税金・詐欺の見分け方を学ぶ。"
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.9.0
+
+# 依存の向き: choimana_okane → choimana_kit → yourwish_learn（未切り出し）→ app_common_kit。
+# 公開リポジトリのため、依存は commit（ref）固定でタグ付けする（共通基盤設計 v0.5 §2・§8）。
+dependencies:
+  choimana_kit:
+    git:
+      url: https://github.com/zka32101/choimana_kit
+      ref: cfd98bf15ee47c39e6e4ed49e79a44b4c72b6289
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^6.0.0
