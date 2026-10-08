@@ -7,4 +7,5 @@ library;
 
 export 'package:choimana_kit/choimana_kit.dart';
 
+export 'calculators/compound_calculator.dart';
 export 'calculators/take_home_pay_calculator.dart';
