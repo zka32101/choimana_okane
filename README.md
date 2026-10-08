@@ -29,7 +29,7 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 | # | 元ファイル | 状態 | 年度依存 | 備考 |
 |---|---|---|---|---|
 | 1 | `take_home_pay_calculator.dart` | **移植済み**（`lib/calculators/take_home_pay_calculator.dart`） | あり | 定数は意図的に期限切れにして配信不可にしている |
-| 2 | `furusato_nozei_calculator.dart` | 未移植 | あり（take_home_payに依存） | 総務省の近似式。ロジック自体は安定 |
+| 2 | `furusato_nozei_calculator.dart` | **移植済み**（`lib/calculators/furusato_nozei_calculator.dart`） | 自身の定数はなし／`TakeHomePayCalculator`に依存 | 総務省の近似式。依存先の定数が出典未確認の間は配信不可（`isDeliverableAt`で連動） |
 | 3 | `compound_simulator.dart` | **移植済み**（`lib/calculators/compound_calculator.dart`） | なし | 純粋な複利計算。年度依存の定数がないため即配信可能（`Parameter`が空）。ランダム変動版（`simulateRandom`）は未移植 |
 | 4 | `nisa_ideco_calculator.dart` | 未移植 | あり | NISA枠（年120万/240万、生涯1,800万）は制度変更時に要更新。投資の基礎はMVPから除外中のため優先度低 |
 | 5 | `pension_estimator.dart` | 未移植 | あり | 満額816,000円（2024年度）等。日本年金機構で再確認が必要 |
@@ -43,10 +43,9 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 
 ## 次の作業（お金 企画設計書 v0.2 §9-3より）
 
-1. **`TakeHomePayCalculator` の定数を実際の出典で確認**（国税庁 所得税速算表・協会けんぽ東京都の料率を2026年度で再確認）し、`Parameter` の `retrievedAt`/`expiresAt` を更新する
-2. `furusato_nozei_calculator` を `TakeHomePayCalculator` の上に移植する（次の作業）
-3. Question／用語／制度のデータを JSON に分離（出典・lawVersion付き）
-4. 3分レッスン化（MVP 30レッスン、3トラック：手取りと税金・社会保険／家計とライフイベント／お金のトラブル・詐欺）
+1. **`TakeHomePayCalculator` の定数を実際の出典で確認**（国税庁 所得税速算表・協会けんぽ東京都の料率を2026年度で再確認）し、`Parameter` の `retrievedAt`/`expiresAt` を更新する。確認できれば `FurusatoNozeiCalculator` も連動して配信可能になる
+2. Question／用語／制度のデータを JSON に分離（出典・lawVersion付き）
+3. 3分レッスン化（MVP 30レッスン、3トラック：手取りと税金・社会保険／家計とライフイベント／お金のトラブル・詐欺）
 
 ## 注意: kinnyu リポジトリの公開リスク（既知・未対応）
 
