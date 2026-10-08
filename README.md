@@ -32,7 +32,7 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 | 2 | `furusato_nozei_calculator.dart` | **移植済み**（`lib/calculators/furusato_nozei_calculator.dart`） | 自身の定数はなし／`TakeHomePayCalculator`に依存 | 総務省の近似式。依存先の定数が出典未確認の間は配信不可（`isDeliverableAt`で連動） |
 | 3 | `compound_simulator.dart` | **移植済み**（`lib/calculators/compound_calculator.dart`） | なし | 純粋な複利計算。年度依存の定数がないため即配信可能（`Parameter`が空）。ランダム変動版（`simulateRandom`）は未移植 |
 | 4 | `nisa_ideco_calculator.dart` | 未移植 | あり | NISA枠（年120万/240万、生涯1,800万）は制度変更時に要更新。投資の基礎はMVPから除外中のため優先度低 |
-| 5 | `pension_estimator.dart` | 未移植 | あり | 満額816,000円（2024年度）等。日本年金機構で再確認が必要 |
+| 5 | `pension_estimator.dart` | **一部移植済み**（`lib/calculators/pension_estimator_calculator.dart`） | あり | 年金額（基礎・厚生）のみ移植。**退職金の概算部分は移植していない**（企業規模別係数2.0/1.5/1.0が公的出典のない独自の仮定値だったため） |
 | 6 | `loan_repayment_simulator.dart` | **移植済み**（`lib/calculators/loan_repayment_calculator.dart`） | なし | 元利均等・元金均等の2方式。金利計算のみで年度依存の定数なし |
 | 7 | `rent_vs_buy_calculator.dart` | 未移植 | 未調査 | MVPから除外候補（既存アプリ共通基盤化候補 v0.1 §9-2） |
 | 8 | `education_cost_planner.dart` | 未移植 | 未調査 | MVPから除外候補 |
