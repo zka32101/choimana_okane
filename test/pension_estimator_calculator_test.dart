@@ -76,7 +76,7 @@ void main() {
       expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isFalse);
     });
 
-    test('choimana_kit の Calculator 契約: compute() は月額の目安を返す', () {
+    test('choimana_core の Calculator 契約: compute() は月額の目安を返す', () {
       final result = calc.compute({
         'averageAnnualIncome': 4000000,
         'pensionEnrollmentYears': 40,

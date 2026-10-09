@@ -20,7 +20,7 @@ void main() {
       expect(calc.isDeliverableAt(DateTime(2026, 10, 8)), isFalse);
     });
 
-    test('choimana_kit の Calculator 契約: compute() は控除上限額を返す', () {
+    test('choimana_core の Calculator 契約: compute() は控除上限額を返す', () {
       final result = calc.compute({'grossAnnualIncome': 5000000});
       final detail = calc.computeDetail(grossAnnualIncome: 5000000);
       expect(result.value, detail.donationLimit.toDouble());

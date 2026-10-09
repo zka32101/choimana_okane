@@ -53,7 +53,7 @@ void main() {
       expect(r.months.last.remainingBalance, 0);
     });
 
-    test('choimana_kit の Calculator 契約: compute() は初回の返済額を返す', () {
+    test('choimana_core の Calculator 契約: compute() は初回の返済額を返す', () {
       final result = calc.compute({
         'principal': 1200000,
         'annualInterestRatePercent': 2,

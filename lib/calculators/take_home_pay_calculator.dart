@@ -64,7 +64,7 @@ class TakeHomePayCalculator extends Calculator {
     return CalculatorResult(value: detail.takeHomeMonthly.toDouble());
   }
 
-  /// UI表示用の内訳つき結果。[compute] は choimana_kit の Calculator 契約
+  /// UI表示用の内訳つき結果。[compute] は choimana_core の Calculator 契約
   /// （単一の目安値）を満たすための簡略版で、実際の画面にはこちらを使う。
   TakeHomePayResult computeDetail({
     required int grossAnnualIncome,

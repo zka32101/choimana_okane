@@ -1,4 +1,4 @@
-/// 配信前CIで実行する検証コマンド（choimana_kit の検証ロジックを使う）。
+/// 配信前CIで実行する検証コマンド（choimana_core の検証ロジックを使う）。
 /// `content/lessons/*.json` と `content/boundary_rules/*.json` を検証する。
 library;
 
