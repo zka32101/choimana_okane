@@ -1,4 +1,4 @@
-// choimana_kit への依存が正しく配線されていることを確認するスモークテスト。
+// choimana_core への依存が正しく配線されていることを確認するスモークテスト。
 // ここで使う数値はすべて架空（出典なし）。実際の税率・控除額は kinnyu の
 // 既存計算の出典確認後に Parameter 表として追加する（お金 企画設計書 v0.2 §9）。
 import 'package:choimana_okane/choimana_okane.dart';
@@ -38,7 +38,7 @@ class _FakeCalculator extends Calculator {
 }
 
 void main() {
-  test('choimana_kit の Calculator を継承できる', () {
+  test('choimana_core の Calculator を継承できる', () {
     final calc = _FakeCalculator();
     expect(calc.compute({'x': 100}).value, closeTo(90, 0.001));
     expect(calc.compute({'x': 100}).note, '目安');

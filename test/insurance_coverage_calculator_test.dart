@@ -43,7 +43,7 @@ void main() {
       expect(r.requiredCoverage, 0);
     });
 
-    test('choimana_kit の Calculator 契約: compute() は必要保障額を返す', () {
+    test('choimana_core の Calculator 契約: compute() は必要保障額を返す', () {
       final result = calc.compute({
         'monthlyLivingExpenseForFamily': 200000,
         'yearsNeeded': 10,

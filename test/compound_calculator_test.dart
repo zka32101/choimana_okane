@@ -50,7 +50,7 @@ void main() {
       expect(years.last.realBalance, lessThan(years.last.balance));
     });
 
-    test('choimana_kit の Calculator 契約: compute() は最終年の実質評価額を返す', () {
+    test('choimana_core の Calculator 契約: compute() は最終年の実質評価額を返す', () {
       final result = calc.compute({
         'monthlyContribution': 10000,
         'annualRatePercent': 3,

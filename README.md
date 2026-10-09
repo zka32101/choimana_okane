@@ -6,7 +6,7 @@
 
 ```
 choimana_okane（このリポジトリ）
- → choimana_kit（共通基盤: Lesson・Track・Freshness・BoundaryRule・Calculator・DeliveryClient）
+ → choimana_core（共通基盤: Lesson・Track・Freshness・BoundaryRule・Calculator・DeliveryClient）
  → yourwish_learn（学習の共通部分。未切り出し）
  → app_common_kit（フィードバック・権利・広告ゲート・テーマ・UI・推し・コイン）
 ```
@@ -15,11 +15,11 @@ choimana_okane（このリポジトリ）
 
 ## v0.1の状態
 
-- `choimana_kit` への依存を commit 固定で配線済み（スモークテストで確認）
+- `choimana_core` への依存を commit 固定で配線済み（スモークテストで確認）
 - `TakeHomePayCalculator` を kinnyu から移植（下記カタログ参照）。**定数は出典未確認**のため、
   `Parameter.expiresAt` を意図的に過去日付にしてあり、`parametersValidAt()` が常に false を返す
   （実データとして配信できない状態を機械的に強制している）
-- CI骨子（`dart analyze`/`test` → 出典・鮮度・禁止語チェック → gitleaks）を choimana_kit と同じ構成で用意
+- CI骨子（`dart analyze`/`test` → 出典・鮮度・禁止語チェック → gitleaks）を choimana_core と同じ構成で用意
 
 ## kinnyu 計算ロジックの移植カタログ（12本）
 

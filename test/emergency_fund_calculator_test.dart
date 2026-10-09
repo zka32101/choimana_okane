@@ -52,7 +52,7 @@ void main() {
       expect(r.monthsToGoal, isNull);
     });
 
-    test('choimana_kit の Calculator 契約: compute() は不足額を返す', () {
+    test('choimana_core の Calculator 契約: compute() は不足額を返す', () {
       final result = calc.compute({
         'monthlyEssentialExpense': 200000,
         'coverageMonths': 6,

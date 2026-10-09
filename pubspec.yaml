@@ -6,13 +6,13 @@ publish_to: 'none'
 environment:
   sdk: ^3.9.0
 
-# 依存の向き: choimana_okane → choimana_kit → yourwish_learn（未切り出し）→ app_common_kit。
+# 依存の向き: choimana_okane → choimana_core → yourwish_learn（未切り出し）→ app_common_kit。
 # 公開リポジトリのため、依存は commit（ref）固定でタグ付けする（共通基盤設計 v0.5 §2・§8）。
 dependencies:
-  choimana_kit:
+  choimana_core:
     git:
-      url: https://github.com/zka32101/choimana_kit
-      ref: cfd98bf15ee47c39e6e4ed49e79a44b4c72b6289
+      url: https://github.com/zka32101/choimana_core
+      ref: 078143521c4b65b0295874199918324a6545e850
 
 dev_dependencies:
   test: ^1.25.0

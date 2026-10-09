@@ -33,7 +33,7 @@ void main() {
       expect(old.requiredMonthlySavings, greaterThan(young.requiredMonthlySavings));
     });
 
-    test('choimana_kit の Calculator 契約: compute() は月々の積立額を返す', () {
+    test('choimana_core の Calculator 契約: compute() は月々の積立額を返す', () {
       final result = calc.compute({'childCurrentAge': 0});
       final detail = calc.computeDetail(childCurrentAge: 0);
       expect(result.value, detail.requiredMonthlySavings.toDouble());

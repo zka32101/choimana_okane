@@ -50,7 +50,7 @@ void main() {
       expect(r.remainingLoanBalance, greaterThan(0));
     });
 
-    test('choimana_kit の Calculator 契約: compute() はコスト差を返す', () {
+    test('choimana_core の Calculator 契約: compute() はコスト差を返す', () {
       final result = calc.compute({
         'monthlyRent': 100000,
         'purchasePrice': 30000000,
