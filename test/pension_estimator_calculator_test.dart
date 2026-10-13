@@ -11,7 +11,7 @@ void main() {
         pensionEnrollmentYears: 40,
         companySize: CompanySize.employee,
       );
-      expect(r.annualBasicPension, 816000);
+      expect(r.annualBasicPension, 847296);
     });
 
     test('納付期間が短いと基礎年金は満額に届かない', () {
@@ -20,7 +20,7 @@ void main() {
         pensionEnrollmentYears: 20,
         companySize: CompanySize.employee,
       );
-      expect(r.annualBasicPension, closeTo(816000 / 2, 1));
+      expect(r.annualBasicPension, closeTo(847296 / 2, 1));
     });
 
     test('自営業は厚生年金部分が0円', () {
@@ -72,8 +72,9 @@ void main() {
       expect(delayed.annualTotalPension, greaterThan(standard.annualTotalPension));
     });
 
-    test('定数は出典未確認のため、意図的に期限切れ（配信不可）になっている', () {
-      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isFalse);
+    test('定数は令和8年度の実データで出典確認済み（2027-04まで配信可）', () {
+      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isTrue);
+      expect(calc.parametersValidAt(DateTime(2027, 5, 1)), isFalse);
     });
 
     test('choimana_core の Calculator 契約: compute() は月額の目安を返す', () {

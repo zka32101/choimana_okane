@@ -28,8 +28,10 @@ class PensionEstimatorResult {
 /// 載せない」方針に従う）。
 ///
 /// 年金の数値自体（基礎年金満額・報酬比例の乗率・繰上げ繰下げ率）は
-/// 日本年金機構の制度に基づくが2024年度時点のまま出典未確認。他の
-/// Calculator と同じく [Parameter] の `expiresAt` を過去日付にしてある。
+/// 日本年金機構の制度に基づき、2026-10-13に令和8年度の実データで出典確認済み。
+/// 基礎年金満額は毎年度の改定率に応じて変わるため、次回改定（2027年4月想定）
+/// を目安に `expiresAt` を設定している。報酬比例の乗率・繰上げ繰下げ率は
+/// 制度変更がない限り変わらない安定した値として扱う。
 class PensionEstimatorCalculator extends Calculator {
   PensionEstimatorCalculator()
       : super(
@@ -38,26 +40,34 @@ class PensionEstimatorCalculator extends Calculator {
           parameters: _parameters,
           sources: [
             Source(
-              title: '老齢年金の受給額（出典未確認・kinnyu移植時点のコメントのみ）',
-              url: 'https://www.nenkin.go.jp/',
+              title: '令和8年4月分からの年金額等について',
+              url: 'https://www.nenkin.go.jp/oshirase/taisetu/kojin/2026/202604/0401.html',
               publisher: '日本年金機構',
-              retrievedAt: DateTime(2026, 1, 1),
-              category: SourceCategory.aux,
+              retrievedAt: DateTime(2026, 10, 13),
+              category: SourceCategory.official,
+            ),
+            Source(
+              title: '報酬比例部分の計算式（乗率5.481/1000・平成15年4月以降）',
+              url: 'https://www.nenkin.go.jp/service/yougo/hagyo/hoshuhirei.html',
+              publisher: '日本年金機構',
+              retrievedAt: DateTime(2026, 10, 13),
+              category: SourceCategory.official,
             ),
           ],
-          reviewedAt: DateTime(2026, 1, 1),
+          reviewedAt: DateTime(2026, 10, 13),
         );
 
   static final _parameters = [
-    _param('full-basic-pension-annual', 816000, '円',
-        '老齢基礎年金の満額（40年=480ヶ月納付時・2024年度）'),
-    _param('full-basic-pension-months', 480, 'ヶ月', '満額となる納付月数'),
+    // 令和8年度（昭和31年4月2日以後生まれ）の満額年額。
+    _param('full-basic-pension-annual', 847296, '円',
+        '老齢基礎年金の満額（40年=480ヶ月納付時・令和8年度）'),
+    _param('full-basic-pension-months', 480, 'ヶ月', '満額となる納付月数（制度上安定）'),
     _param('employee-pension-rate', 5.481 / 1000, '乗率',
-        '老齢厚生年金の報酬比例部分（2003年4月以降の簡易乗率）'),
+        '老齢厚生年金の報酬比例部分（平成15年4月以降の乗率・制度上安定）'),
     _param('early-claim-reduction-per-month', 0.004, '割合',
-        '繰り上げ受給: 1ヶ月あたりの減額率（標準受給開始65歳・2022年4月以降の制度）'),
+        '繰り上げ受給: 1ヶ月あたりの減額率（標準受給開始65歳・令和4年4月以降の制度・昭和37年4月2日以降生まれ対象）'),
     _param('delayed-claim-increase-per-month', 0.007, '割合',
-        '繰り下げ受給: 1ヶ月あたりの増額率'),
+        '繰り下げ受給: 1ヶ月あたりの増額率（制度上安定）'),
   ];
 
   static Parameter _param(String id, num value, String unit, String basis) => Parameter(
@@ -65,11 +75,12 @@ class PensionEstimatorCalculator extends Calculator {
         value: value.toDouble(),
         unit: unit,
         basis: basis,
-        lawVersion: '2024年度（基礎年金満額）／2022年4月以降（繰上げ繰下げ率）'
-            ' — 出典未確認。2026年度で再確認が必要',
-        retrievedAt: DateTime(2026, 1, 1),
-        // 意図的に過去日付にして「このままでは配信できない」を機械的に強制する。
-        expiresAt: DateTime(2026, 1, 1),
+        lawVersion: '令和8年度（基礎年金満額）／令和4年4月以降（繰上げ繰下げ率）',
+        retrievedAt: DateTime(2026, 10, 13),
+        // 基礎年金満額は毎年度改定されるため、次回改定時期（2027年4月想定）で
+        // 配信不可になるよう設定。乗率・繰上げ繰下げ率は制度変更がなければ
+        // 変わらないが、同じ期限で一括管理する。
+        expiresAt: DateTime(2027, 4, 1),
       );
 
   double _rate(String id) => parameters.firstWhere((p) => p.paramId == id).value;

@@ -22,9 +22,11 @@ class NisaResult {
 /// 確認後の第2弾で扱う）。コードは先行して用意するが、Lesson化・UI公開
 /// はMVPでは行わない。
 ///
-/// 枠の金額は制度上の数値のため年度依存（2024年度時点の新NISA制度）。
-/// 出典未確認のため、他の Calculator と同様に [Parameter] の
-/// `expiresAt` を過去日付にしてある。
+/// 枠の金額は2026-10-13に出典確認済み。2026年度も2024年度の新NISA制度の
+/// 枠（つみたて120万円・成長240万円・生涯1,800万円）から変更がないことを
+/// 確認した。ただし2027年1月から18歳未満向けの枠が新設される見込みのため
+/// （18歳以上の枠自体は変更なしだが、制度の前提が変わる節目のため）、
+/// `expiresAt` をその直前に設定し再確認を促す。
 class NisaCalculator extends Calculator {
   NisaCalculator()
       : super(
@@ -33,20 +35,20 @@ class NisaCalculator extends Calculator {
           parameters: _parameters,
           sources: [
             Source(
-              title: 'NISA制度の概要（出典未確認・kinnyu移植時点のコメントのみ）',
-              url: 'https://www.fsa.go.jp/',
+              title: '令和8年度税制改正大綱（NISA制度・18歳未満向け枠の新設等）',
+              url: 'https://www.fsa.go.jp/news/r7/sonota/20251226-2/01.pdf',
               publisher: '金融庁',
-              retrievedAt: DateTime(2026, 1, 1),
-              category: SourceCategory.aux,
+              retrievedAt: DateTime(2026, 10, 13),
+              category: SourceCategory.official,
             ),
           ],
-          reviewedAt: DateTime(2026, 1, 1),
+          reviewedAt: DateTime(2026, 10, 13),
         );
 
   static final _parameters = [
-    _param('tsumitate-annual-limit', 1200000, '円', 'つみたて投資枠の年間上限'),
-    _param('growth-annual-limit', 2400000, '円', '成長投資枠の年間上限'),
-    _param('lifetime-limit', 18000000, '円', '生涯投資枠の上限（合計）'),
+    _param('tsumitate-annual-limit', 1200000, '円', 'つみたて投資枠の年間上限（18歳以上・2026年度も変更なし）'),
+    _param('growth-annual-limit', 2400000, '円', '成長投資枠の年間上限（2026年度も変更なし）'),
+    _param('lifetime-limit', 18000000, '円', '生涯投資枠の上限（合計・2026年度も変更なし）'),
   ];
 
   static Parameter _param(String id, int value, String unit, String basis) => Parameter(
@@ -54,10 +56,11 @@ class NisaCalculator extends Calculator {
         value: value.toDouble(),
         unit: unit,
         basis: basis,
-        lawVersion: '2024年度（新NISA制度）— 出典未確認。制度変更時・2026年度で再確認が必要',
-        retrievedAt: DateTime(2026, 1, 1),
-        // 意図的に過去日付にして「このままでは配信できない」を機械的に強制する。
-        expiresAt: DateTime(2026, 1, 1),
+        lawVersion: '新NISA制度（2024年度〜。2026年度も変更なしを確認済み）',
+        retrievedAt: DateTime(2026, 10, 13),
+        // 2027年1月に18歳未満向け枠が新設される見込みのため、その直前で
+        // 再確認を促す。
+        expiresAt: DateTime(2027, 1, 1),
       );
 
   int _limit(String id) => parameters.firstWhere((p) => p.paramId == id).value.round();

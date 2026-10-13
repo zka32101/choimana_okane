@@ -5,8 +5,9 @@ void main() {
   final calc = IdecoCalculator();
 
   group('IdecoCalculator', () {
-    test('定数は出典未確認のため、意図的に期限切れ（配信不可）になっている', () {
-      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isFalse);
+    test('定数は2026年12月の制度改正前の値として確認済み（施行直前で配信不可になる）', () {
+      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isTrue);
+      expect(calc.parametersValidAt(DateTime(2026, 12, 1)), isFalse);
     });
 
     test('加入区分ごとに月額上限が異なる', () {

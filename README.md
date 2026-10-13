@@ -51,9 +51,11 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 計算12本のうち11本を調査・移植済み（household のみ移植しない決定）。
 年度依存なしの7本（compound・loan_repayment・rent_vs_buy・
 emergency_fund・insurance_coverage ほか）は**即配信可能**。年度依存あり
-の5本（take_home_pay・furusato_nozei・pension_estimator・
-education_cost・nisa・ideco）は出典確認まで配信不可（nisa・ideco は
-さらにMVP除外の方針も重なる）。
+の6本中、pension_estimator・education_cost・nisa は出典確認済みで
+配信可能になった。ideco は2026年11月まで配信可能（12月の制度改正で停止）。
+take_home_pay・furusato_nozei は基礎控除以外の一部定数（扶養控除・
+住民税均等割の区分別金額）がまだ未検証のため配信不可のまま
+（nisa・idecoはMVP除外方針もあり、出典確認済みでもLesson化・UI公開はしない）。
 
 ## 次の作業（お金 企画設計書 v0.2 §9-3より）
 
@@ -66,9 +68,16 @@ education_cost・nisa・ideco）は出典確認まで配信不可（nisa・ideco
    - [ ] 扶養控除（所得税・住民税とも「1人あたり概算」の簡略化。実際は一般/特定/老人/同居老親等で
      金額が異なり、特定親族特別控除の新設も未反映）・住民税均等割（自治体により変動）は依然未検証。
      完了すれば `FurusatoNozeiCalculator` も連動して配信可能になる
-   - [ ] `PensionEstimatorCalculator`（日本年金機構の年金額）
-   - [ ] `EducationCostCalculator`（文部科学省の教育費調査）
-   - [ ] `NisaCalculator`/`IdecoCalculator`（金融庁・国民年金基金連合会。MVP除外方針のため優先度低）
+   - [x] `PensionEstimatorCalculator` — 基礎年金満額（令和8年度847,296円）・報酬比例の乗率
+     （5.481/1000）・繰上げ繰下げ率を日本年金機構の公表資料で確認済み（2027-04まで配信可）
+   - [x] `EducationCostCalculator` — 幼稚園〜高校は文部科学省「令和5年度子供の学習費調査」の
+     年間学習費総額×年数、大学は同調査を基にした二次情報で確認済み（調査が概ね2年おきのため
+     2028年頃の次回調査まで配信可）
+   - [x] `NisaCalculator` — つみたて/成長投資枠・生涯投資枠は2026年度も変更なしと確認済み
+     （2027年1月の18歳未満向け枠新設を節目に再確認が必要）
+   - [x] `IdecoCalculator` — 2026年11月までの値として確認済み。**2026年12月1日に拠出限度額の
+     制度改正が施行される**（第1号6.8万→7.5万円等）ため、改正後の計算式（企業年金の有無・額に
+     応じた計算が必要）への再実装がさらに必要（MVP除外方針のため優先度低）
 2. Question／用語／制度のデータを JSON に分離（出典・lawVersion付き）
    - [x] 用語集: choimana_core に `GlossaryTerm`/`validateGlossaryTerm` を追加し、kinnyu の
      `GlossaryData` から手取り・税トラックに関連する9語を `content/glossary/*.json` に移植

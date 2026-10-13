@@ -61,9 +61,11 @@ class EducationCostResult {
 ///
 /// kinnyu（zka32101/kinnyu）の `EducationCostPlanner` から移植。
 /// 段階別・進路別の費用テーブルは、kinnyu側のコメントで「文部科学省
-/// 『子供の学習費調査』等を参考にした近似値」とされているが、**具体的な
-/// 出典URL・調査年度が明記されていない**。他の Calculator と同様、
-/// [Parameter] の `expiresAt` を過去日付にして配信不可を機械的に強制する。
+/// 『子供の学習費調査』等を参考にした近似値」とされていたが、**具体的な
+/// 出典URL・調査年度が明記されていなかった**ため、2026-10-13に文部科学省
+/// 「令和5年度子供の学習費調査」（幼稚園〜高校）の公表データで実際の年間
+/// 学習費総額×各段階の年数に置き換えて出典確認した。大学費用は文科省調査を
+/// 基にした二次情報（出典明記あり・aux）で確認した。
 class EducationCostCalculator extends Calculator {
   EducationCostCalculator()
       : super(
@@ -72,56 +74,64 @@ class EducationCostCalculator extends Calculator {
           parameters: _parameters,
           sources: [
             Source(
-              title: '子供の学習費調査（出典未確認。kinnyu移植時点のコメントに'
-                  '「文部科学省『子供の学習費調査』等を参考」とあるのみで、'
-                  '具体的な調査年度・URLの記載なし）',
-              url: 'https://www.mext.go.jp/',
-              publisher: '文部科学省（推定。要確認）',
-              retrievedAt: DateTime(2026, 1, 1),
+              title: '令和5年度子供の学習費調査結果のポイント（幼稚園〜高校の学習費総額）',
+              url: 'https://www.mext.go.jp/content/20260116-mxt_chousa01-000039333_1.pdf',
+              publisher: '文部科学省',
+              retrievedAt: DateTime(2026, 10, 13),
+              category: SourceCategory.official,
+            ),
+            Source(
+              title: '大学の学費ってどれぐらい？（文部科学省の調査を基にした4年間の学費総額の目安）',
+              url: 'https://www.nomura.co.jp/fin-wing/column/study_expenses_for_university/',
+              publisher: '野村の金融経済教育サイト「Fin Wing」（文科省調査の二次情報）',
+              retrievedAt: DateTime(2026, 10, 13),
               category: SourceCategory.aux,
             ),
           ],
-          reviewedAt: DateTime(2026, 1, 1),
+          reviewedAt: DateTime(2026, 10, 13),
         );
 
   static final _parameters = [
     for (final stage in EducationStage.values)
       for (final track in SchoolTrack.values)
-        _param(stage, track, _legacyCostTable[stage]![track]!),
+        _param(stage, track, _costTable[stage]![track]!),
   ];
 
   static Parameter _param(EducationStage stage, SchoolTrack track, int value) => Parameter(
         paramId: 'education-cost-${stage.name}-${track.name}',
         value: value.toDouble(),
         unit: '円',
-        basis: '${stage.name}（${track.name}）の教育費総額（出典未確認）',
-        lawVersion: '出典未確認（調査年度不明）— 文部科学省の調査等で再確認が必要',
-        retrievedAt: DateTime(2026, 1, 1),
-        // 意図的に過去日付にして「このままでは配信できない」を機械的に強制する。
-        expiresAt: DateTime(2026, 1, 1),
+        basis: '${stage.name}（${track.name}）の教育費総額（令和5年度子供の学習費調査等に基づく）',
+        lawVersion: '令和5年度子供の学習費調査（文部科学省。概ね2年おきに調査・公表）',
+        retrievedAt: DateTime(2026, 10, 13),
+        // 調査はおおむね2年に1度のペースのため、次回公表（2028年頃想定）を
+        // 目安に expiresAt を設定する。
+        expiresAt: DateTime(2028, 1, 1),
       );
 
-  /// kinnyu から移植した近似値（出典未確認）。
-  static const Map<EducationStage, Map<SchoolTrack, int>> _legacyCostTable = {
+  /// 文部科学省「令和5年度子供の学習費調査」の年間学習費総額×各段階の年数
+  /// （幼稚園3年・小学校6年・中学校3年・高校3年）。大学は二次情報（Fin Wing）
+  /// による4年間総額の目安。
+  static const Map<EducationStage, Map<SchoolTrack, int>> _costTable = {
     EducationStage.kindergarten: {
-      SchoolTrack.public: 700000,
-      SchoolTrack.private: 1580000,
+      SchoolTrack.public: 555000, // 185,000円/年 × 3年
+      SchoolTrack.private: 1041000, // 347,000円/年 × 3年
     },
     EducationStage.elementary: {
-      SchoolTrack.public: 1920000,
-      SchoolTrack.private: 9600000,
+      SchoolTrack.public: 2202000, // 367,000円/年 × 6年
+      SchoolTrack.private: 10452000, // 1,742,000円/年 × 6年
     },
     EducationStage.juniorHigh: {
-      SchoolTrack.public: 1460000,
-      SchoolTrack.private: 4050000,
+      SchoolTrack.public: 1626000, // 542,000円/年 × 3年
+      SchoolTrack.private: 4680000, // 1,560,000円/年 × 3年
     },
     EducationStage.highSchool: {
-      SchoolTrack.public: 1370000,
-      SchoolTrack.private: 2900000,
+      SchoolTrack.public: 1791000, // 597,000円/年 × 3年
+      SchoolTrack.private: 3537000, // 1,179,000円/年 × 3年
     },
     EducationStage.university: {
-      SchoolTrack.public: 2550000,
-      SchoolTrack.private: 4750000,
+      SchoolTrack.public: 2420000, // 国公立4年間の目安（入学金含む）
+      SchoolTrack.private: 5186942, // 私立4年間の目安（文系・理系等の平均）
     },
   };
 

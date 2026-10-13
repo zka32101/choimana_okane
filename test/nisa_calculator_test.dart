@@ -5,8 +5,9 @@ void main() {
   final calc = NisaCalculator();
 
   group('NisaCalculator', () {
-    test('定数は出典未確認のため、意図的に期限切れ（配信不可）になっている', () {
-      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isFalse);
+    test('定数は2026年度も変更なしと確認済み（2027年1月の制度変更まで配信可）', () {
+      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isTrue);
+      expect(calc.parametersValidAt(DateTime(2027, 2, 1)), isFalse);
     });
 
     test('未投資ならすべて上限額が残っている', () {

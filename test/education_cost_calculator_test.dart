@@ -5,8 +5,9 @@ void main() {
   final calc = EducationCostCalculator();
 
   group('EducationCostCalculator', () {
-    test('定数は出典未確認のため、意図的に期限切れ（配信不可）になっている', () {
-      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isFalse);
+    test('定数は文部科学省の調査データで出典確認済み（2028年頃の次回調査まで配信可）', () {
+      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isTrue);
+      expect(calc.parametersValidAt(DateTime(2028, 2, 1)), isFalse);
     });
 
     test('私立の方が公立より費用が高い（大学）', () {
