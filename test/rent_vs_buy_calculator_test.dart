@@ -9,7 +9,7 @@ void main() {
       // Calculator自体の reviewedAt による通常の鮮度判定は別途かかるが、
       // 依存先（LoanRepaymentCalculator）の Parameter が空のため、
       // それが原因で配信不可になることはない。
-      expect(calc.isDeliverableAt(DateTime(2026, 1, 1)), isTrue);
+      expect(calc.isFullyDeliverableAt(DateTime(2026, 1, 1)), isTrue);
     });
 
     test('賃貸コストは家賃×12×年数で積み上がる（上昇率0%）', () {

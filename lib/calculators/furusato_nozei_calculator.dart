@@ -46,9 +46,14 @@ class FurusatoNozeiCalculator extends Calculator {
 
   /// この計算機自身に年度依存の定数はないが、依存先（[TakeHomePayCalculator]）
   /// の定数が有効でなければ配信できない。
+  ///
+  /// `_takeHomePay.isDeliverableAt` ではなく `isFullyDeliverableAt` を見るのが
+  /// 重要（choimana_core の [Calculator.isFullyDeliverableAt] 参照）。
+  /// `isDeliverableAt` は鮮度のみの判定のため、依存先の `Parameter` が
+  /// 期限切れでも見逃してしまう。
   @override
-  bool isDeliverableAt(DateTime now) =>
-      super.isDeliverableAt(now) && _takeHomePay.isDeliverableAt(now);
+  bool isFullyDeliverableAt(DateTime now) =>
+      super.isFullyDeliverableAt(now) && _takeHomePay.isFullyDeliverableAt(now);
 
   @override
   CalculatorResult compute(Map<String, double> inputs) {

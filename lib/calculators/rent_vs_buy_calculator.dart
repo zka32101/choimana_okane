@@ -65,9 +65,15 @@ class RentVsBuyCalculator extends Calculator {
 
   final LoanRepaymentCalculator _loanRepayment;
 
+  /// `_loanRepayment.isDeliverableAt` ではなく `isFullyDeliverableAt` を見るのが
+  /// 重要（choimana_core の [Calculator.isFullyDeliverableAt] 参照）。
+  /// `isDeliverableAt` は鮮度のみの判定のため、依存先の `Parameter` が
+  /// 期限切れでも見逃してしまう（[LoanRepaymentCalculator] 自体は
+  /// `parameters: const []` なので今は実害がないが、将来 Parameter が
+  /// 追加された場合にも安全なパターンに揃えておく）。
   @override
-  bool isDeliverableAt(DateTime now) =>
-      super.isDeliverableAt(now) && _loanRepayment.isDeliverableAt(now);
+  bool isFullyDeliverableAt(DateTime now) =>
+      super.isFullyDeliverableAt(now) && _loanRepayment.isFullyDeliverableAt(now);
 
   @override
   CalculatorResult compute(Map<String, double> inputs) {

@@ -46,12 +46,10 @@ void main() {
     test(
       'しかし kind=predict のレッスンが参照する calcId の Calculator は、'
       '基礎控除・扶養控除が未検証のため配信不可のままである'
-      '（DailyPickSelector はレッスンの鮮度（isDeliverableAt）しか見ないため、'
+      '（DailyPickSelector はレッスンの鮮度（Lesson.isDeliverableAt）しか見ないため、'
       'predict系レッスンを実際に表示する側は lesson.calcId の Calculator の '
-      'parametersValidAt も別途チェックする必要がある、という既知のギャップを'
-      '明示するテスト。Calculator.isDeliverableAt 自体は鮮度のみの判定で、'
-      'FurusatoNozei/RentVsBuy のように依存先がある場合だけ parametersValidAt を'
-      '合成している）',
+      'isFullyDeliverableAt（choimana_core 0781435 以降で追加）も別途チェックする'
+      '必要がある、という既知のギャップを明示するテスト）',
       () {
         final now = DateTime(2026, 10, 20);
         expect(lesson.kind, LessonKind.predict);
@@ -60,7 +58,7 @@ void main() {
         final calculator = TakeHomePayCalculator();
         expect(calculator.calcId, lesson.calcId);
         expect(calculator.isDeliverableAt(now), isTrue, reason: '鮮度自体はまだOK');
-        expect(calculator.parametersValidAt(now), isFalse, reason: '基礎控除等が未検証のため');
+        expect(calculator.isFullyDeliverableAt(now), isFalse, reason: '基礎控除等が未検証のため');
       },
     );
   });

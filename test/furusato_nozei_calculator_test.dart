@@ -17,7 +17,7 @@ void main() {
     });
 
     test('依存先（TakeHomePayCalculator）の定数が期限切れのため配信不可', () {
-      expect(calc.isDeliverableAt(DateTime(2026, 10, 8)), isFalse);
+      expect(calc.isFullyDeliverableAt(DateTime(2026, 10, 8)), isFalse);
     });
 
     test('choimana_core の Calculator 契約: compute() は控除上限額を返す', () {
