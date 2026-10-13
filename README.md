@@ -20,6 +20,13 @@ choimana_okane（このリポジトリ）
   `Parameter.expiresAt` を意図的に過去日付にしてあり、`parametersValidAt()` が常に false を返す
   （実データとして配信できない状態を機械的に強制している）
 - CI骨子（`dart analyze`/`test` → 出典・鮮度・禁止語チェック → gitleaks）を choimana_core と同じ構成で用意
+- `tool/build_manifest.dart` — `content/` 配下を choimana_core の `ManifestBuilder` に渡し、
+  配信用 `manifest.json` を生成する（`dart run tool/build_manifest.dart [出力先]`）。
+  署名鍵の本番運用はまだ未決定のため、暫定的に HMAC-SHA256 の開発用鍵（環境変数
+  `MANIFEST_SIGNING_KEY` 未設定時は固定の開発用キー）で署名している。本番の鍵管理方式が
+  決まったら `ManifestSigner` の実装を差し替えるだけでよい設計にしてある。
+  `test/build_manifest_integration_test.dart` で、生成した manifest を `DeliveryClient` が
+  実際に検証・保存できることを確認済み
 
 ## kinnyu 計算ロジックの移植カタログ（12本）
 
