@@ -9,7 +9,7 @@ void main() {
       final r = calc.computeDetail(grossAnnualIncome: 5000000);
 
       // kinnyu の元実装と同じ式で、手計算せず「大きく外れていないか」の帯で確認する。
-      expect(r.socialInsurance.total, closeTo(5000000 * (0.0499 + 0.0915 + 0.006), 1));
+      expect(r.socialInsurance.total, closeTo(5000000 * (0.0495 + 0.0915 + 0.005), 1));
       expect(r.socialInsurance.longTermCareInsurance, 0);
       expect(r.takeHomeAnnual, lessThan(r.grossAnnualIncome));
       expect(r.takeHomeRate, inInclusiveRange(0.7, 0.9));

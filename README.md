@@ -28,7 +28,7 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 
 | # | 元ファイル | 状態 | 年度依存 | 備考 |
 |---|---|---|---|---|
-| 1 | `take_home_pay_calculator.dart` | **移植済み**（`lib/calculators/take_home_pay_calculator.dart`） | あり | 定数は意図的に期限切れにして配信不可にしている |
+| 1 | `take_home_pay_calculator.dart` | **移植済み**（`lib/calculators/take_home_pay_calculator.dart`） | あり | 社会保険料率（健康・介護・厚生年金・雇用保険）と標準報酬月額の上限は**2026-10-13に令和8年度の実データで出典確認済み**（2027-04まで配信可）。所得税/住民税の基礎控除・扶養控除は令和8年度税制改正で段階制に変わり未反映のため、依然期限切れ（配信不可） |
 | 2 | `furusato_nozei_calculator.dart` | **移植済み**（`lib/calculators/furusato_nozei_calculator.dart`） | 自身の定数はなし／`TakeHomePayCalculator`に依存 | 総務省の近似式。依存先の定数が出典未確認の間は配信不可（`isDeliverableAt`で連動） |
 | 3 | `compound_simulator.dart` | **移植済み**（`lib/calculators/compound_calculator.dart`） | なし | 純粋な複利計算。年度依存の定数がないため即配信可能（`Parameter`が空）。ランダム変動版（`simulateRandom`）は未移植 |
 | 4 | `nisa_ideco_calculator.dart` | **移植済み**（`lib/calculators/nisa_calculator.dart`・`lib/calculators/ideco_calculator.dart`） | あり | NISA枠（年120万/240万、生涯1,800万）・iDeCo月額上限（加入区分別）とも出典未確認で意図的に配信不可。**投資の基礎（NISA/iDeCo）はMVPから除外する方針**（企画設計書 v0.2 §3-1）のため、コードは用意するがLesson化・UI公開はしない。年次複利版（`CompoundGrowthSimulator`）は`CompoundCalculator`と機能が重なるため移植せず |
@@ -50,10 +50,14 @@ education_cost・nisa・ideco）は出典確認まで配信不可（nisa・ideco
 
 ## 次の作業（お金 企画設計書 v0.2 §9-3より）
 
-1. **出典未確認の定数を実際の出典で確認する**（国税庁 所得税速算表・協会けんぽ東京都の料率・
-   日本年金機構の年金額・文部科学省の教育費調査を2026年度で再確認）し、各 `Parameter` の
-   `retrievedAt`/`expiresAt` を更新する。確認できれば `FurusatoNozeiCalculator` も連動して
-   配信可能になる
+1. **出典未確認の定数を実際の出典で確認する**
+   - [x] `TakeHomePayCalculator` の社会保険料率4種・標準報酬月額の上限（2026-10-13確認済み）
+   - [ ] 所得税の基礎控除・扶養控除を令和8年度税制改正の段階制（本則62万+加算最大42万=最大104万等）に
+     合わせて再実装（単一 `Parameter` 値では表現できないため、`_employmentIncomeDeduction`/`_incomeTax`
+     と同様の速算表関数に置き換える必要がある）。完了すれば `FurusatoNozeiCalculator` も連動して配信可能になる
+   - [ ] `PensionEstimatorCalculator`（日本年金機構の年金額）
+   - [ ] `EducationCostCalculator`（文部科学省の教育費調査）
+   - [ ] `NisaCalculator`/`IdecoCalculator`（金融庁・国民年金基金連合会。MVP除外方針のため優先度低）
 2. Question／用語／制度のデータを JSON に分離（出典・lawVersion付き）
 3. 3分レッスン化（MVP 30レッスン、3トラック：手取りと税金・社会保険／家計とライフイベント／お金のトラブル・詐欺）
 
