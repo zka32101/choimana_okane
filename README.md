@@ -60,6 +60,12 @@ education_cost・nisa・ideco）は出典確認まで配信不可（nisa・ideco
    - [ ] `NisaCalculator`/`IdecoCalculator`（金融庁・国民年金基金連合会。MVP除外方針のため優先度低）
 2. Question／用語／制度のデータを JSON に分離（出典・lawVersion付き）
 3. 3分レッスン化（MVP 30レッスン、3トラック：手取りと税金・社会保険／家計とライフイベント／お金のトラブル・詐欺）
+   - `content/lessons/take-home-pay-001.json` を1本目のサンプルとして追加（`kind: predict`、`calcId: take-home-pay`）
+   - `test/daily_pick_wiring_test.dart` で DailyPickSelector・Lesson・Calculator の結合を確認し、
+     **既知のギャップ**を明示した: `DailyPickSelector`/`Lesson.isDeliverableAt` はレッスンの鮮度しか見ないため、
+     `kind: predict` のレッスンを実際に表示するアプリ側は `lesson.calcId` で参照する Calculator の
+     `parametersValidAt()` を別途チェックする必要がある（`Calculator.isDeliverableAt` 自体も鮮度のみの判定で、
+     `FurusatoNozeiCalculator`/`RentVsBuyCalculator` のように依存先がある場合だけ `parametersValidAt` を合成している）
 
 ## 注意: kinnyu リポジトリの公開リスク（既知・未対応）
 

@@ -1,0 +1,66 @@
+{
+  "lessonId": "take-home-pay-001",
+  "trackId": "takehome-tax",
+  "title": "給料の額面と手取り、どれくらい違う？",
+  "minutes": 3,
+  "kind": "predict",
+  "rank": "mid",
+  "calcId": "take-home-pay",
+  "cards": [
+    {
+      "cardId": "c1",
+      "text": "額面から健康保険・介護保険・厚生年金・雇用保険の4つの社会保険料が引かれる"
+    },
+    {
+      "cardId": "c2",
+      "text": "さらに所得税・住民税が引かれて、残りが「手取り」になる"
+    },
+    {
+      "cardId": "c3",
+      "text": "手取りはおおむね額面の7〜8割が目安（年収や扶養人数で変わる）"
+    }
+  ],
+  "quiz": [
+    {
+      "qid": "q1",
+      "type": "truefalse",
+      "stem": "額面年収と手取り年収は同じ金額である",
+      "answer": "false",
+      "explain": "社会保険料・所得税・住民税が引かれるため、手取りは額面より少なくなる",
+      "topicTag": "takehome-basics"
+    },
+    {
+      "qid": "q2",
+      "type": "choice",
+      "stem": "額面から最初に引かれるのはどれ？",
+      "choices": ["所得税", "社会保険料", "住民税"],
+      "answer": "1",
+      "explain": "社会保険料が先に引かれ、その後の金額に所得税・住民税がかかる",
+      "topicTag": "takehome-basics"
+    }
+  ],
+  "action": {
+    "actionId": "a1",
+    "text": "自分の給与明細（または想定年収）で手取り計算ツールを試してみる",
+    "checklist": ["給与明細の「控除」欄を確認した", "自分の手取り目安を計算した"]
+  },
+  "sources": [
+    {
+      "title": "令和8年度における協会けんぽの保険料率等について",
+      "url": "https://www.kyoukaikenpo.or.jp/file/202510231821.pdf",
+      "publisher": "全国健康保険協会（協会けんぽ）",
+      "retrievedAt": "2026-10-13T00:00:00.000Z",
+      "category": "official"
+    },
+    {
+      "title": "厚生年金保険料率・標準報酬月額の上限（令和8年度）",
+      "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000147284_00024.html",
+      "publisher": "厚生労働省",
+      "retrievedAt": "2026-10-13T00:00:00.000Z",
+      "category": "official"
+    }
+  ],
+  "lawVersion": "令和8年度（2026年度）",
+  "reviewedAt": "2026-10-13T00:00:00.000Z",
+  "contentVer": "0.1.0"
+}
