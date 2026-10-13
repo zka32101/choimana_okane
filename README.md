@@ -62,6 +62,10 @@ education_cost・nisa・ideco）は出典確認まで配信不可（nisa・ideco
    - [x] 用語集: choimana_core に `GlossaryTerm`/`validateGlossaryTerm` を追加し、kinnyu の
      `GlossaryData` から手取り・税トラックに関連する9語を `content/glossary/*.json` に移植
      （数値・施行日を持たないため出典・鮮度は必須にしていないが、禁止語チェックは行う）
+   - [x] `LessonCard.termRefs` でレッスンの要点カードから用語集にリンク（take-home-pay-001・
+     furusato-nozei-001/002に適用済み）。`tool/validate_content.dart` が
+     `validateCrossReferences`（choimana_core 22509b0）で `ruleId`/`calcId`/`termRefs` の
+     参照整合性を検証する（存在しないIDへの参照は配信前CIで検出される）
    - [ ] 残りの用語（投資・保険カテゴリ）はMVP対象トラックができてから移植する
 3. 3分レッスン化（MVP 30レッスン、3トラック：手取りと税金・社会保険／家計とライフイベント／お金のトラブル・詐欺）
    - `content/lessons/take-home-pay-001.json`（`kind: predict`、`calcId: take-home-pay`）
