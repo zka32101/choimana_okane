@@ -59,13 +59,21 @@ education_cost・nisa・ideco）は出典確認まで配信不可（nisa・ideco
    - [ ] `EducationCostCalculator`（文部科学省の教育費調査）
    - [ ] `NisaCalculator`/`IdecoCalculator`（金融庁・国民年金基金連合会。MVP除外方針のため優先度低）
 2. Question／用語／制度のデータを JSON に分離（出典・lawVersion付き）
+   - [x] 用語集: choimana_core に `GlossaryTerm`/`validateGlossaryTerm` を追加し、kinnyu の
+     `GlossaryData` から手取り・税トラックに関連する9語を `content/glossary/*.json` に移植
+     （数値・施行日を持たないため出典・鮮度は必須にしていないが、禁止語チェックは行う）
+   - [ ] 残りの用語（投資・保険カテゴリ）はMVP対象トラックができてから移植する
 3. 3分レッスン化（MVP 30レッスン、3トラック：手取りと税金・社会保険／家計とライフイベント／お金のトラブル・詐欺）
-   - `content/lessons/take-home-pay-001.json` を1本目のサンプルとして追加（`kind: predict`、`calcId: take-home-pay`）
+   - `content/lessons/take-home-pay-001.json`（`kind: predict`、`calcId: take-home-pay`）
+   - `content/lessons/furusato-nozei-001.json`（`kind: predict`、`calcId: furusato-nozei`）
+   - `content/lessons/furusato-nozei-002.json`（`kind: boundary`、`ruleId: furusato-nozei-one-stop`）
+   - `content/boundary_rules/furusato-nozei-one-stop.json` — 型①（境界線スライダー）の最初の実例。
+     「寄付先が5自治体以内か」「もともと確定申告が必要な人か」の2条件からワンストップ特例の
+     対象かどうかを判定する。`test/boundary_rule_content_test.dart` で組み合わせごとの結論を確認済み
    - `test/daily_pick_wiring_test.dart` で DailyPickSelector・Lesson・Calculator の結合を確認し、
      **既知のギャップ**を明示した: `DailyPickSelector`/`Lesson.isDeliverableAt` はレッスンの鮮度しか見ないため、
      `kind: predict` のレッスンを実際に表示するアプリ側は `lesson.calcId` で参照する Calculator の
-     `parametersValidAt()` を別途チェックする必要がある（`Calculator.isDeliverableAt` 自体も鮮度のみの判定で、
-     `FurusatoNozeiCalculator`/`RentVsBuyCalculator` のように依存先がある場合だけ `parametersValidAt` を合成している）
+     `isFullyDeliverableAt()`（choimana_core 0781435 以降）も別途チェックする必要がある
 
 ## 注意: kinnyu リポジトリの公開リスク（既知・未対応）
 

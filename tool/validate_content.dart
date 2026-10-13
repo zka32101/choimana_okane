@@ -1,5 +1,6 @@
 /// 配信前CIで実行する検証コマンド（choimana_core の検証ロジックを使う）。
-/// `content/lessons/*.json` と `content/boundary_rules/*.json` を検証する。
+/// `content/lessons/*.json`・`content/boundary_rules/*.json`・
+/// `content/glossary/*.json` を検証する。
 library;
 
 import 'dart:convert';
@@ -22,6 +23,11 @@ Future<void> main(List<String> args) async {
   checked += await _validateDir(
     Directory('$root/boundary_rules'),
     (json) => validateBoundaryRule(BoundaryRule.fromJson(json), now),
+    issues,
+  );
+  checked += await _validateDir(
+    Directory('$root/glossary'),
+    (json) => validateGlossaryTerm(GlossaryTerm.fromJson(json)),
     issues,
   );
 

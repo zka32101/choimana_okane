@@ -1,0 +1,50 @@
+{
+  "ruleId": "furusato-nozei-one-stop",
+  "title": "ふるさと納税で確定申告は必要？（ワンストップ特例）",
+  "conditions": [
+    {
+      "conditionId": "alreadyFilesTaxReturn",
+      "label": "もともと確定申告が必要な人か（副業・医療費控除など）",
+      "trueLabel": "必要",
+      "falseLabel": "不要"
+    },
+    {
+      "conditionId": "donatesToFiveOrFewerMunicipalities",
+      "label": "寄付先の自治体数は5以下か",
+      "trueLabel": "5以下",
+      "falseLabel": "6以上"
+    }
+  ],
+  "outcomes": [
+    {
+      "conditionValues": { "alreadyFilesTaxReturn": true },
+      "conclusion": "もともと確定申告が必要なため、ふるさと納税の分もあわせて確定申告する必要がある（目安）",
+      "basis": "ふるさと納税ワンストップ特例制度の対象外要件（総務省）"
+    },
+    {
+      "conditionValues": { "donatesToFiveOrFewerMunicipalities": false },
+      "conclusion": "寄付先が6自治体以上のため、確定申告が必要になる（目安）",
+      "basis": "ふるさと納税ワンストップ特例制度（寄付先5自治体以内が条件）"
+    },
+    {
+      "conditionValues": {
+        "alreadyFilesTaxReturn": false,
+        "donatesToFiveOrFewerMunicipalities": true
+      },
+      "conclusion": "ワンストップ特例制度の申請をすれば、確定申告なしで控除を受けられる（目安）",
+      "basis": "ふるさと納税ワンストップ特例制度（総務省）"
+    }
+  ],
+  "sources": [
+    {
+      "title": "ふるさと納税ワンストップ特例制度について",
+      "url": "https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/onestop.html",
+      "publisher": "総務省",
+      "retrievedAt": "2026-10-13T00:00:00.000Z",
+      "category": "official"
+    }
+  ],
+  "lawVersion": "ふるさと納税ワンストップ特例制度（現行）",
+  "reviewedAt": "2026-10-13T00:00:00.000Z",
+  "contentVer": "0.1.0"
+}
