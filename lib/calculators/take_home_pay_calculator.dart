@@ -8,15 +8,19 @@ import 'package:choimana_okane/choimana_okane.dart';
 /// - 健康保険料率・介護保険料率・厚生年金保険料率・雇用保険料率・標準報酬月額の
 ///   上限は全国平均/一律の値で検証し、`retrievedAt`/`expiresAt` を更新した
 ///   （次の料率改定時期である2027年4月を目安に `expiresAt` を設定）。
-/// - 一方、所得税の基礎控除は令和8年度税制改正により**所得に応じた段階制
-///   （本則62万円＋合計所得489万円以下は加算42万円で最大104万円等）**に
-///   変わり、単一の [Parameter] 値では正しく表現できない。扶養控除も特定親族
-///   特別控除の新設など要件が変わっている。これらは依然**出典未確認・
-///   要再実装（速算表化が必要）**のため [expiresAt] を過去日付のままにして
-///   [parametersValidAt] が false を返すようにしてある
-///   （Lesson の鮮度チェックと同じ「安全側に倒す」考え方）。住民税の基礎控除
-///   43万円は変更なしと確認できたが、連動する所得税側が未実装のため同様に
-///   期限切れのままにしている。
+/// - 所得税の基礎控除は令和8年度税制改正により所得に応じた段階制（本則62万円＋
+///   合計所得489万円以下は加算42万円で最大104万円等）に変わったため、
+///   `_employmentIncomeDeduction`/`_incomeTax` と同様に単一の [Parameter] 値
+///   ではなく [_basicDeductionIncomeTax] の速算表関数として実装した
+///   （国税庁の公表資料で確認済み）。
+/// - 住民税の基礎控除（43万円）は変更なしと確認済み。住民税所得割の標準税率
+///   （10%）も安定した制度のため検証済みとして扱う。
+/// - 一方、扶養控除は「1人あたり概算」で簡略化しており、実際は一般/特定/老人/
+///   同居老親等で控除額が異なる（特定親族特別控除の新設も未反映）。
+///   住民税均等割も自治体により変動する。これらは依然**出典未確認・
+///   要再実装（控除区分別の速算表化が必要）**のため [expiresAt] を過去日付の
+///   ままにして [parametersValidAt] が false を返すようにしてある
+///   （Lesson の鮮度チェックと同じ「安全側に倒す」考え方）。
 class TakeHomePayCalculator extends Calculator {
   TakeHomePayCalculator()
       : super(
@@ -46,7 +50,21 @@ class TakeHomePayCalculator extends Calculator {
               category: SourceCategory.aux,
             ),
             Source(
-              title: '所得税の仕組み（基礎控除・扶養控除は令和8年度改正で段階制に変更。未反映）',
+              title: '令和8年度税制改正による所得税の基礎控除の引上げ等について',
+              url: 'https://www.nta.go.jp/users/gensen/2026kiso/index.htm',
+              publisher: '国税庁',
+              retrievedAt: DateTime(2026, 10, 13),
+              category: SourceCategory.official,
+            ),
+            Source(
+              title: '個人住民税の基礎控除・所得割の標準税率（令和8年度・変更なし）',
+              url: 'https://www.city.kobe.lg.jp/a83576/kurashi/tax/shikenminze/r8kaisei.html',
+              publisher: '神戸市（総務省の地方税制改正に基づく解説）',
+              retrievedAt: DateTime(2026, 10, 13),
+              category: SourceCategory.aux,
+            ),
+            Source(
+              title: '扶養控除・住民税均等割（控除区分別の金額は未反映・出典未確認）',
               url: 'https://www.nta.go.jp/',
               publisher: '国税庁',
               retrievedAt: DateTime(2026, 1, 1),
@@ -68,11 +86,12 @@ class TakeHomePayCalculator extends Calculator {
     // 一般の事業 13.5/1000 のうち労働者負担5/1000。
     _verifiedParam('employment-insurance-rate', 0.005, '割合', '雇用保険料率（一般の事業・従業員負担分・令和8年度）'),
     _verifiedParam('pensionable-income-cap', 7800000, '円', '標準報酬月額の上限（65万円・年額換算）。2027年9月以降68万円へ引き上げ予定'),
-    _unverifiedParam('basic-deduction', 480000, '円', '基礎控除（所得税）。令和8年度改正で所得に応じた段階制（本則62万+加算最大42万=最大104万）に変更されたため未反映・要再実装'),
-    _unverifiedParam('dependent-deduction-per-person', 380000, '円', '扶養控除（所得税・1人あたり概算）。特定親族特別控除の新設など要件変更が未反映'),
-    _unverifiedParam('resident-tax-basic-deduction', 430000, '円', '基礎控除（住民税）。43万円で変更なしと確認済みだが、連動する所得税側が未実装のため暫定的に未検証扱い'),
-    _unverifiedParam('resident-tax-dependent-deduction-per-person', 330000, '円', '扶養控除（住民税・一般・1人あたり）'),
-    _unverifiedParam('resident-tax-rate', 0.10, '割合', '住民税所得割（標準税率）'),
+    // 基礎控除（所得税）は令和8年度改正で所得に応じた段階制になったため、
+    // Parameter ではなく _basicDeductionIncomeTax の速算表関数で扱う。
+    _unverifiedParam('dependent-deduction-per-person', 380000, '円', '扶養控除（所得税・1人あたり概算）。実際は一般/特定/老人/同居老親等で金額が異なり、特定親族特別控除の新設も未反映'),
+    _verifiedParam('resident-tax-basic-deduction', 430000, '円', '基礎控除（住民税）。43万円で令和8年度も変更なしと確認済み'),
+    _unverifiedParam('resident-tax-dependent-deduction-per-person', 330000, '円', '扶養控除（住民税・一般・1人あたり概算）。実際は区分により金額が異なる'),
+    _verifiedParam('resident-tax-rate', 0.10, '割合', '住民税所得割（標準税率・安定した制度のため検証済み）'),
     _unverifiedParam('resident-tax-per-capita', 5000, '円', '住民税均等割の概算（自治体により変動）'),
   ];
 
@@ -128,8 +147,12 @@ class TakeHomePayCalculator extends Calculator {
 
     final dependentDeduction = dependents * _rate('dependent-deduction-per-person').round();
 
+    // 基礎控除は合計所得金額に応じた段階制（令和8年度改正）。このCalculatorには
+    // 給与所得以外の収入がないため、給与所得（employmentIncome）を合計所得金額の
+    // 近似値として使う。
+    final basicDeduction = _basicDeductionIncomeTax(employmentIncome);
     final taxableForIncomeTax = (employmentIncome -
-            _rate('basic-deduction').round() -
+            basicDeduction -
             dependentDeduction -
             socialInsurance.total)
         .clamp(0, employmentIncome);
@@ -152,7 +175,7 @@ class TakeHomePayCalculator extends Calculator {
       socialInsurance: socialInsurance,
       employmentIncomeDeduction: employmentIncomeDeduction,
       employmentIncome: employmentIncome,
-      basicDeduction: _rate('basic-deduction').round(),
+      basicDeduction: basicDeduction,
       dependentDeduction: dependentDeduction,
       taxableIncomeForIncomeTax: taxableForIncomeTax,
       incomeTax: incomeTax,
@@ -182,6 +205,20 @@ class TakeHomePayCalculator extends Calculator {
     if (g <= 6600000) return (g * 0.2 + 440000).round();
     if (g <= 8500000) return (g * 0.1 + 1100000).round();
     return 1950000;
+  }
+
+  /// 所得税の基礎控除（令和8年度・令和9年度限定の特例を含む速算表。国税庁
+  /// 「令和8年度税制改正による所得税の基礎控除の引上げ等について」）。
+  /// [totalIncome] は合計所得金額（このCalculatorでは給与所得で近似）。
+  int _basicDeductionIncomeTax(int totalIncome) {
+    final t = totalIncome;
+    if (t <= 4890000) return 1040000;
+    if (t <= 6550000) return 670000;
+    if (t <= 23500000) return 620000;
+    if (t <= 24000000) return 480000;
+    if (t <= 24500000) return 320000;
+    if (t <= 25000000) return 160000;
+    return 0;
   }
 
   /// 所得税額（復興特別所得税2.1%込み）。国税庁の速算表（令和6年分）。

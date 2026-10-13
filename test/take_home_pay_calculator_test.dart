@@ -47,4 +47,26 @@ void main() {
       expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isFalse);
     });
   });
+
+  group('基礎控除（所得税）の段階制（令和8年度税制改正）', () {
+    test('合計所得489万円以下は104万円', () {
+      // 給与所得489万円になるよう、給与所得控除込みで額面を逆算する必要はなく、
+      // ここでは給与所得そのものが低めになる年収で確認する。
+      final r = calc.computeDetail(grossAnnualIncome: 3000000);
+      expect(r.employmentIncome, lessThanOrEqualTo(4890000));
+      expect(r.basicDeduction, 1040000);
+    });
+
+    test('合計所得489万円超655万円以下は67万円', () {
+      final r = calc.computeDetail(grossAnnualIncome: 7500000);
+      expect(r.employmentIncome, inInclusiveRange(4890001, 6550000));
+      expect(r.basicDeduction, 670000);
+    });
+
+    test('合計所得655万円超2,350万円以下は62万円', () {
+      final r = calc.computeDetail(grossAnnualIncome: 10000000);
+      expect(r.employmentIncome, greaterThan(6550000));
+      expect(r.basicDeduction, 620000);
+    });
+  });
 }
