@@ -12,7 +12,7 @@ dependencies:
   choimana_core:
     git:
       url: https://github.com/zka32101/choimana_core
-      ref: c812c689c4cb1b3ae29ec5549d534d9abbf1899c
+      ref: 6b28c3a7ae0873809440a3add675c6e45691a269
   crypto: ^3.0.3
 
 dev_dependencies:
