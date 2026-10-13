@@ -94,10 +94,12 @@ take_home_pay・furusato_nozei は基礎控除以外の一部定数（扶養控�
    - `content/boundary_rules/furusato-nozei-one-stop.json` — 型①（境界線スライダー）の最初の実例。
      「寄付先が5自治体以内か」「もともと確定申告が必要な人か」の2条件からワンストップ特例の
      対象かどうかを判定する。`test/boundary_rule_content_test.dart` で組み合わせごとの結論を確認済み
-   - `test/daily_pick_wiring_test.dart` で DailyPickSelector・Lesson・Calculator の結合を確認し、
-     **既知のギャップ**を明示した: `DailyPickSelector`/`Lesson.isDeliverableAt` はレッスンの鮮度しか見ないため、
-     `kind: predict` のレッスンを実際に表示するアプリ側は `lesson.calcId` で参照する Calculator の
-     `isFullyDeliverableAt()`（choimana_core 0781435 以降）も別途チェックする必要がある
+   - `test/daily_pick_wiring_test.dart` で DailyPickSelector・Lesson・Calculator の結合を確認。
+     当初は既知のギャップ（`DailyPickSelector`/`Lesson.isDeliverableAt` がレッスンの鮮度しか見ない）
+     を明示していたが、choimana_core (c812c68) で `DailyPickSelector.pick()` に
+     `isCalcDeliverableAt` コールバックが追加され、`calcId` を持つレッスンの選定時に
+     Calculator の `isFullyDeliverableAt()` を合成できるようになった。本リポジトリでもその
+     合成パターンをテストで確認済み
 
 ## 注意: kinnyu リポジトリの公開リスク（既知・未対応）
 

@@ -29,8 +29,57 @@ void main() {
       expect(lesson.isDeliverableAt(now), isTrue);
     });
 
-    test('DailyPickSelector はレッスンの鮮度だけ見るため選ばれる', () {
+    test(
+      'isCalcDeliverableAtを渡さない場合、DailyPickSelectorはレッスンの鮮度だけ見て選ぶ'
+      '（従来の挙動。choimana_core 0781435時点の既知のギャップ）',
+      () {
+        final now = DateTime(2026, 10, 20);
+        final pick = DailyPickSelector.pick(
+          tracks: [track],
+          lessonsById: {lesson.lessonId: lesson},
+          completedLessonIds: {},
+          srsItems: const [],
+          quizById: {},
+          now: now,
+        );
+        expect(pick, isNotNull);
+        expect(pick!.lesson.lessonId, 'take-home-pay-001');
+      },
+    );
+
+    test(
+      'isCalcDeliverableAtを渡すと、calcIdのCalculatorが実際には配信可能なため選ばれる'
+      '（take-home-payの基礎控除は令和8年度改正の段階制で再実装済み。'
+      '扶養控除等が未検証のため依然 parametersValidAt は false だが、'
+      'isFullyDeliverableAt は鮮度のみを見るisDeliverableAtとは異なり両方を合成する）',
+      () {
+        final now = DateTime(2026, 10, 20);
+        final calculator = TakeHomePayCalculator();
+        expect(calculator.calcId, lesson.calcId);
+
+        final pick = DailyPickSelector.pick(
+          tracks: [track],
+          lessonsById: {lesson.lessonId: lesson},
+          completedLessonIds: {},
+          srsItems: const [],
+          quizById: {},
+          now: now,
+          isCalcDeliverableAt: (calcId, now) {
+            expect(calcId, 'take-home-pay');
+            return calculator.isFullyDeliverableAt(now);
+          },
+        );
+
+        // 扶養控除・住民税均等割がまだ未検証のため、このCalculatorは
+        // 現時点では isFullyDeliverableAt が false になる。
+        expect(calculator.isFullyDeliverableAt(now), isFalse);
+        expect(pick, isNull, reason: 'このトラックには他に代替レッスンがないため');
+      },
+    );
+
+    test('Calculatorが完全に配信可能であれば、isCalcDeliverableAtを渡してもレッスンが選ばれる', () {
       final now = DateTime(2026, 10, 20);
+
       final pick = DailyPickSelector.pick(
         tracks: [track],
         lessonsById: {lesson.lessonId: lesson},
@@ -38,28 +87,11 @@ void main() {
         srsItems: const [],
         quizById: {},
         now: now,
+        isCalcDeliverableAt: (calcId, now) => true,
       );
+
       expect(pick, isNotNull);
       expect(pick!.lesson.lessonId, 'take-home-pay-001');
     });
-
-    test(
-      'しかし kind=predict のレッスンが参照する calcId の Calculator は、'
-      '基礎控除・扶養控除が未検証のため配信不可のままである'
-      '（DailyPickSelector はレッスンの鮮度（Lesson.isDeliverableAt）しか見ないため、'
-      'predict系レッスンを実際に表示する側は lesson.calcId の Calculator の '
-      'isFullyDeliverableAt（choimana_core 0781435 以降で追加）も別途チェックする'
-      '必要がある、という既知のギャップを明示するテスト）',
-      () {
-        final now = DateTime(2026, 10, 20);
-        expect(lesson.kind, LessonKind.predict);
-        expect(lesson.calcId, 'take-home-pay');
-
-        final calculator = TakeHomePayCalculator();
-        expect(calculator.calcId, lesson.calcId);
-        expect(calculator.isDeliverableAt(now), isTrue, reason: '鮮度自体はまだOK');
-        expect(calculator.isFullyDeliverableAt(now), isFalse, reason: '基礎控除等が未検証のため');
-      },
-    );
   });
 }
