@@ -31,7 +31,7 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 | 1 | `take_home_pay_calculator.dart` | **移植済み**（`lib/calculators/take_home_pay_calculator.dart`） | あり | 定数は意図的に期限切れにして配信不可にしている |
 | 2 | `furusato_nozei_calculator.dart` | **移植済み**（`lib/calculators/furusato_nozei_calculator.dart`） | 自身の定数はなし／`TakeHomePayCalculator`に依存 | 総務省の近似式。依存先の定数が出典未確認の間は配信不可（`isDeliverableAt`で連動） |
 | 3 | `compound_simulator.dart` | **移植済み**（`lib/calculators/compound_calculator.dart`） | なし | 純粋な複利計算。年度依存の定数がないため即配信可能（`Parameter`が空）。ランダム変動版（`simulateRandom`）は未移植 |
-| 4 | `nisa_ideco_calculator.dart` | 未移植 | あり | NISA枠（年120万/240万、生涯1,800万）は制度変更時に要更新。投資の基礎はMVPから除外中のため優先度低 |
+| 4 | `nisa_ideco_calculator.dart` | **移植済み**（`lib/calculators/nisa_calculator.dart`・`lib/calculators/ideco_calculator.dart`） | あり | NISA枠（年120万/240万、生涯1,800万）・iDeCo月額上限（加入区分別）とも出典未確認で意図的に配信不可。**投資の基礎（NISA/iDeCo）はMVPから除外する方針**（企画設計書 v0.2 §3-1）のため、コードは用意するがLesson化・UI公開はしない。年次複利版（`CompoundGrowthSimulator`）は`CompoundCalculator`と機能が重なるため移植せず |
 | 5 | `pension_estimator.dart` | **一部移植済み**（`lib/calculators/pension_estimator_calculator.dart`） | あり | 年金額（基礎・厚生）のみ移植。**退職金の概算部分は移植していない**（企業規模別係数2.0/1.5/1.0が公的出典のない独自の仮定値だったため） |
 | 6 | `loan_repayment_simulator.dart` | **移植済み**（`lib/calculators/loan_repayment_calculator.dart`） | なし | 元利均等・元金均等の2方式。金利計算のみで年度依存の定数なし |
 | 7 | `rent_vs_buy_calculator.dart` | **移植済み**（`lib/calculators/rent_vs_buy_calculator.dart`） | なし | 住宅購入vs賃貸の比較。`LoanRepaymentCalculator`に依存。MVPから除外候補（既存アプリ共通基盤化候補 v0.1 §9-2） |
@@ -41,11 +41,12 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 | 11 | `household_simulator.dart` | 移植しない（決定） | - | 世帯機能は切り離し対象（個人情報なし・比較なしの方針と衝突） |
 | 12 | `investment_simulation_pattern.dart` | 移植しない（MVPでは） | - | 投資基礎はMVP除外。仮想運用の扱いは要確認 |
 
-計算12本のうち9本を移植済み（1本は決定により対象外、1本はMVP除外、
-`nisa_ideco_calculator`のみ未調査）。年度依存なしの7本（compound・
-loan_repayment・rent_vs_buy・emergency_fund・insurance_coverage ほか）は
-**即配信可能**。年度依存ありの3本（take_home_pay・furusato_nozei・
-pension_estimator・education_cost）は出典確認まで配信不可。
+計算12本のうち11本を調査・移植済み（household のみ移植しない決定）。
+年度依存なしの7本（compound・loan_repayment・rent_vs_buy・
+emergency_fund・insurance_coverage ほか）は**即配信可能**。年度依存あり
+の5本（take_home_pay・furusato_nozei・pension_estimator・
+education_cost・nisa・ideco）は出典確認まで配信不可（nisa・ideco は
+さらにMVP除外の方針も重なる）。
 
 ## 次の作業（お金 企画設計書 v0.2 §9-3より）
 
