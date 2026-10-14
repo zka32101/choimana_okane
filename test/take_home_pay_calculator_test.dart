@@ -43,8 +43,69 @@ void main() {
       expect(result.note, '目安');
     });
 
-    test('定数は出典未確認のため、意図的に期限切れ（配信不可）になっている', () {
-      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isFalse);
+    test('全定数が出典確認済みのため配信可能（2027-04の次回料率改定まで）', () {
+      expect(calc.parametersValidAt(DateTime(2026, 10, 8)), isTrue);
+      expect(calc.parametersValidAt(DateTime(2027, 5, 1)), isFalse);
+    });
+  });
+
+  group('扶養控除の区分別の金額', () {
+    test('一般の扶養親族は所得税38万円・住民税33万円', () {
+      final withGeneral = calc.computeDetail(
+        grossAnnualIncome: 5000000,
+        dependentsByCategory: {DependentCategory.general: 1},
+      );
+      final without = calc.computeDetail(grossAnnualIncome: 5000000);
+      expect(withGeneral.dependentDeduction, 380000);
+      expect(withGeneral.takeHomeAnnual, greaterThan(without.takeHomeAnnual));
+    });
+
+    test('特定扶養親族（19〜22歳）は一般より控除額が大きい', () {
+      final general = calc.computeDetail(
+        grossAnnualIncome: 5000000,
+        dependentsByCategory: {DependentCategory.general: 1},
+      );
+      final specific = calc.computeDetail(
+        grossAnnualIncome: 5000000,
+        dependentsByCategory: {DependentCategory.specific: 1},
+      );
+      expect(specific.dependentDeduction, 630000);
+      expect(specific.takeHomeAnnual, greaterThan(general.takeHomeAnnual));
+    });
+
+    test('同居老親等は同居以外の老人扶養親族より控除額が大きい', () {
+      final other = calc.computeDetail(
+        grossAnnualIncome: 5000000,
+        dependentsByCategory: {DependentCategory.elderlyOther: 1},
+      );
+      final cohabiting = calc.computeDetail(
+        grossAnnualIncome: 5000000,
+        dependentsByCategory: {DependentCategory.elderlyCohabiting: 1},
+      );
+      expect(other.dependentDeduction, 480000);
+      expect(cohabiting.dependentDeduction, 580000);
+      expect(cohabiting.takeHomeAnnual, greaterThan(other.takeHomeAnnual));
+    });
+
+    test('複数区分を組み合わせた場合、各区分の控除額が合算される', () {
+      final r = calc.computeDetail(
+        grossAnnualIncome: 8000000,
+        dependentsByCategory: {
+          DependentCategory.general: 1,
+          DependentCategory.specific: 1,
+        },
+      );
+      expect(r.dependentDeduction, 380000 + 630000);
+    });
+
+    test('dependentsByCategoryを指定しない場合、dependentsは一般区分として扱われる', () {
+      final viaDependents = calc.computeDetail(grossAnnualIncome: 5000000, dependents: 2);
+      final viaCategory = calc.computeDetail(
+        grossAnnualIncome: 5000000,
+        dependentsByCategory: {DependentCategory.general: 2},
+      );
+      expect(viaDependents.dependentDeduction, viaCategory.dependentDeduction);
+      expect(viaDependents.takeHomeAnnual, viaCategory.takeHomeAnnual);
     });
   });
 

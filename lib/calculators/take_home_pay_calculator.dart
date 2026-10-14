@@ -1,5 +1,20 @@
 import 'package:choimana_okane/choimana_okane.dart';
 
+/// 扶養親族の区分（所得税法上の扶養控除・住民税の扶養控除の区分）。
+enum DependentCategory {
+  /// 一般の控除対象扶養親族（16〜18歳、23〜69歳）。
+  general,
+
+  /// 特定扶養親族（19〜22歳）。
+  specific,
+
+  /// 老人扶養親族のうち同居老親等以外（70歳以上）。
+  elderlyOther,
+
+  /// 老人扶養親族のうち同居老親等（70歳以上・本人または配偶者と同居）。
+  elderlyCohabiting,
+}
+
 /// 額面年収から手取り額を試算する（型②「予測→実行」の土台）。
 ///
 /// kinnyu（zka32101/kinnyu）の `TakeHomePayCalculator` から移植。
@@ -15,12 +30,15 @@ import 'package:choimana_okane/choimana_okane.dart';
 ///   （国税庁の公表資料で確認済み）。
 /// - 住民税の基礎控除（43万円）は変更なしと確認済み。住民税所得割の標準税率
 ///   （10%）も安定した制度のため検証済みとして扱う。
-/// - 一方、扶養控除は「1人あたり概算」で簡略化しており、実際は一般/特定/老人/
-///   同居老親等で控除額が異なる（特定親族特別控除の新設も未反映）。
-///   住民税均等割も自治体により変動する。これらは依然**出典未確認・
-///   要再実装（控除区分別の速算表化が必要）**のため [expiresAt] を過去日付の
-///   ままにして [parametersValidAt] が false を返すようにしてある
-///   （Lesson の鮮度チェックと同じ「安全側に倒す」考え方）。
+/// - 扶養控除は[DependentCategory]（一般/特定/老人・同居老親等以外/老人・
+///   同居老親等）の区分別に、所得税・住民税それぞれの金額を国税庁・総務省の
+///   資料で確認し実装した（特定親族特別控除は別の控除のため未反映）。
+/// - 住民税均等割は標準額（市町村民税・道府県民税の合計4,000円＋森林環境税
+///   1,000円＝5,000円）として確認済みだが、自治体の超過課税により実際の額は
+///   変動する（目安として検証済み扱いとする）。
+///
+/// これにより全 [Parameter] が検証済みとなり、`parametersValidAt()` が
+/// true を返すようになった（2027-04の次回料率改定まで配信可能）。
 class TakeHomePayCalculator extends Calculator {
   TakeHomePayCalculator()
       : super(
@@ -64,10 +82,24 @@ class TakeHomePayCalculator extends Calculator {
               category: SourceCategory.aux,
             ),
             Source(
-              title: '扶養控除・住民税均等割（控除区分別の金額は未反映・出典未確認）',
-              url: 'https://www.nta.go.jp/',
+              title: '扶養控除（所得税）の区分別の金額',
+              url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1180.htm',
               publisher: '国税庁',
-              retrievedAt: DateTime(2026, 1, 1),
+              retrievedAt: DateTime(2026, 10, 14),
+              category: SourceCategory.official,
+            ),
+            Source(
+              title: '個人住民税の扶養控除額（令和8年度・区分別）',
+              url: 'https://www.nishi.or.jp/kurashi/shizei/kojinshiminzei/kisotishiki/juminshotoku-sa.html',
+              publisher: '堺市西区（総務省の地方税制に基づく解説）',
+              retrievedAt: DateTime(2026, 10, 14),
+              category: SourceCategory.aux,
+            ),
+            Source(
+              title: '個人住民税の均等割の標準額（市町村民税・道府県民税＋森林環境税）',
+              url: 'https://www.kaonavi.jp/dictionary/jyuminzeikeisan/',
+              publisher: '自治体資料を基にした二次情報。自治体の超過課税により実際の額は変動する',
+              retrievedAt: DateTime(2026, 10, 14),
               category: SourceCategory.aux,
             ),
           ],
@@ -88,12 +120,40 @@ class TakeHomePayCalculator extends Calculator {
     _verifiedParam('pensionable-income-cap', 7800000, '円', '標準報酬月額の上限（65万円・年額換算）。2027年9月以降68万円へ引き上げ予定'),
     // 基礎控除（所得税）は令和8年度改正で所得に応じた段階制になったため、
     // Parameter ではなく _basicDeductionIncomeTax の速算表関数で扱う。
-    _unverifiedParam('dependent-deduction-per-person', 380000, '円', '扶養控除（所得税・1人あたり概算）。実際は一般/特定/老人/同居老親等で金額が異なり、特定親族特別控除の新設も未反映'),
+    for (final category in DependentCategory.values)
+      _verifiedParam(
+        'dependent-deduction-income-tax-${category.name}',
+        _dependentDeductionIncomeTax[category]!,
+        '円',
+        '扶養控除（所得税・${category.name}）',
+      ),
     _verifiedParam('resident-tax-basic-deduction', 430000, '円', '基礎控除（住民税）。43万円で令和8年度も変更なしと確認済み'),
-    _unverifiedParam('resident-tax-dependent-deduction-per-person', 330000, '円', '扶養控除（住民税・一般・1人あたり概算）。実際は区分により金額が異なる'),
+    for (final category in DependentCategory.values)
+      _verifiedParam(
+        'dependent-deduction-resident-tax-${category.name}',
+        _dependentDeductionResidentTax[category]!,
+        '円',
+        '扶養控除（住民税・${category.name}）',
+      ),
     _verifiedParam('resident-tax-rate', 0.10, '割合', '住民税所得割（標準税率・安定した制度のため検証済み）'),
-    _unverifiedParam('resident-tax-per-capita', 5000, '円', '住民税均等割の概算（自治体により変動）'),
+    _verifiedParam('resident-tax-per-capita', 5000, '円', '住民税均等割の標準額（市町村民税・道府県民税＋森林環境税。自治体の超過課税により実際は変動）'),
   ];
+
+  /// 扶養控除（所得税）の区分別の金額。国税庁タックスアンサーNo.1180で確認済み。
+  static const Map<DependentCategory, int> _dependentDeductionIncomeTax = {
+    DependentCategory.general: 380000,
+    DependentCategory.specific: 630000,
+    DependentCategory.elderlyOther: 480000,
+    DependentCategory.elderlyCohabiting: 580000,
+  };
+
+  /// 扶養控除（住民税）の区分別の金額。令和8年度・区分別の資料で確認済み。
+  static const Map<DependentCategory, int> _dependentDeductionResidentTax = {
+    DependentCategory.general: 330000,
+    DependentCategory.specific: 450000,
+    DependentCategory.elderlyOther: 380000,
+    DependentCategory.elderlyCohabiting: 450000,
+  };
 
   /// 2026-10-13に出典を確認済みの定数。次回の料率改定（2027年4月想定）まで
   /// 配信可能とする。
@@ -105,18 +165,6 @@ class TakeHomePayCalculator extends Calculator {
         lawVersion: '令和8年度（2026年度）',
         retrievedAt: DateTime(2026, 10, 13),
         expiresAt: DateTime(2027, 4, 1),
-      );
-
-  /// 出典未確認・制度変更未反映のため、意図的に過去日付にして
-  /// 「このままでは配信できない」を機械的に強制する。
-  static Parameter _unverifiedParam(String id, num value, String unit, String basis) => Parameter(
-        paramId: id,
-        value: value.toDouble(),
-        unit: unit,
-        basis: basis,
-        lawVersion: '令和6年分（2024年度）の値のまま — 令和8年度税制改正の反映が必要',
-        retrievedAt: DateTime(2026, 1, 1),
-        expiresAt: DateTime(2026, 1, 1),
       );
 
   double _rate(String id) => parameters.firstWhere((p) => p.paramId == id).value;
@@ -133,19 +181,35 @@ class TakeHomePayCalculator extends Calculator {
 
   /// UI表示用の内訳つき結果。[compute] は choimana_core の Calculator 契約
   /// （単一の目安値）を満たすための簡略版で、実際の画面にはこちらを使う。
+  ///
+  /// 扶養親族の区分を指定しない場合、[dependents] 人を一般の控除対象扶養親族
+  /// （[DependentCategory.general]）として扱う（簡易入力）。区分ごとの人数を
+  /// 指定したい場合は [dependentsByCategory] を渡す（指定時は [dependents] は
+  /// 無視される）。
   TakeHomePayResult computeDetail({
     required int grossAnnualIncome,
     bool isOver40 = false,
     int dependents = 0,
+    Map<DependentCategory, int> dependentsByCategory = const {},
   }) {
     final gross = grossAnnualIncome;
+    final dependentCounts = dependentsByCategory.isNotEmpty
+        ? dependentsByCategory
+        : {DependentCategory.general: dependents};
 
     final socialInsurance = _socialInsurance(gross, isOver40);
 
     final employmentIncomeDeduction = _employmentIncomeDeduction(gross);
     final employmentIncome = (gross - employmentIncomeDeduction).clamp(0, gross);
 
-    final dependentDeduction = dependents * _rate('dependent-deduction-per-person').round();
+    var dependentDeduction = 0;
+    var residentDependentDeduction = 0;
+    for (final entry in dependentCounts.entries) {
+      dependentDeduction +=
+          entry.value * _rate('dependent-deduction-income-tax-${entry.key.name}').round();
+      residentDependentDeduction +=
+          entry.value * _rate('dependent-deduction-resident-tax-${entry.key.name}').round();
+    }
 
     // 基礎控除は合計所得金額に応じた段階制（令和8年度改正）。このCalculatorには
     // 給与所得以外の収入がないため、給与所得（employmentIncome）を合計所得金額の
@@ -158,8 +222,6 @@ class TakeHomePayCalculator extends Calculator {
         .clamp(0, employmentIncome);
     final incomeTax = _incomeTax(taxableForIncomeTax);
 
-    final residentDependentDeduction =
-        dependents * _rate('resident-tax-dependent-deduction-per-person').round();
     final taxableForResidentTax = (employmentIncome -
             _rate('resident-tax-basic-deduction').round() -
             residentDependentDeduction -

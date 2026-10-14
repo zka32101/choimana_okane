@@ -51,11 +51,11 @@ kinnyu（`lib/features/simulation/domain/models/`）を調査した結果。「�
 計算12本のうち11本を調査・移植済み（household のみ移植しない決定）。
 年度依存なしの7本（compound・loan_repayment・rent_vs_buy・
 emergency_fund・insurance_coverage ほか）は**即配信可能**。年度依存あり
-の6本中、pension_estimator・education_cost・nisa は出典確認済みで
-配信可能になった。ideco は2026年11月まで配信可能（12月の制度改正で停止）。
-take_home_pay・furusato_nozei は基礎控除以外の一部定数（扶養控除・
-住民税均等割の区分別金額）がまだ未検証のため配信不可のまま
-（nisa・idecoはMVP除外方針もあり、出典確認済みでもLesson化・UI公開はしない）。
+の6本すべてが出典確認済みで配信可能になった（take_home_pay・
+furusato_nozei・pension_estimator・education_cost・nisa・idecoの全てで
+`isFullyDeliverableAt`がtrueを返す）。idecoは2026年11月まで配信可能
+（12月の制度改正で停止）。nisa・idecoはMVP除外方針もあり、出典確認済み
+でもLesson化・UI公開はしない。
 
 ## 次の作業（お金 企画設計書 v0.2 §9-3より）
 
@@ -65,9 +65,12 @@ take_home_pay・furusato_nozei は基礎控除以外の一部定数（扶養控�
      655万円以下は67万、2,350万円以下は62万、以降段階的に減少し2,500万超で0円）に合わせて
      `_basicDeductionIncomeTax` 速算表関数として再実装（国税庁資料で確認済み）。住民税の基礎控除（43万円・
      変更なし）と所得割の標準税率（10%）も検証済みにした
-   - [ ] 扶養控除（所得税・住民税とも「1人あたり概算」の簡略化。実際は一般/特定/老人/同居老親等で
-     金額が異なり、特定親族特別控除の新設も未反映）・住民税均等割（自治体により変動）は依然未検証。
-     完了すれば `FurusatoNozeiCalculator` も連動して配信可能になる
+   - [x] 扶養控除 — `DependentCategory`（一般/特定/老人・同居老親等以外/老人・同居老親等）の
+     区分別に所得税・住民税それぞれの金額を国税庁・総務省の資料で確認し実装（特定親族特別控除は
+     別の控除のため未反映）。住民税均等割も標準額（4,000円＋森林環境税1,000円＝5,000円）として
+     確認済み（自治体の超過課税により実際は変動するが目安として扱う）。
+     **これにより `TakeHomePayCalculator` の全Parameterが検証済みとなり、`FurusatoNozeiCalculator`
+     も連動して配信可能になった**
    - [x] `PensionEstimatorCalculator` — 基礎年金満額（令和8年度847,296円）・報酬比例の乗率
      （5.481/1000）・繰上げ繰下げ率を日本年金機構の公表資料で確認済み（2027-04まで配信可）
    - [x] `EducationCostCalculator` — 幼稚園〜高校は文部科学省「令和5年度子供の学習費調査」の
@@ -100,6 +103,10 @@ take_home_pay・furusato_nozei は基礎控除以外の一部定数（扶養控�
      `isCalcDeliverableAt` コールバックが追加され、`calcId` を持つレッスンの選定時に
      Calculator の `isFullyDeliverableAt()` を合成できるようになった。本リポジトリでもその
      合成パターンをテストで確認済み
+   - `content/tracks/takehome-tax.json` — `Track`を初めてJSON化（choimana_core 6b28c3a以降の
+     `validateCrossReferences`の`tracks`パラメータで参照整合性・重複IDを検証）。
+     `take-home-pay-001 → furusato-nozei-001 → furusato-nozei-002`の順。
+     `daily_pick_wiring_test.dart`もハードコードのTrackから実際のJSON読み込みに変更した
 
 ## 注意: kinnyu リポジトリの公開リスク（既知・未対応）
 

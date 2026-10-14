@@ -9,20 +9,20 @@ import 'package:test/test.dart';
 void main() {
   group('DailyPickSelector × Lesson × Calculator の結合', () {
     late Lesson lesson;
+    late Track track;
+
+    T loadJson<T>(String path, T Function(Map<String, dynamic>) parse) {
+      final json = jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
+      return parse(json);
+    }
 
     setUpAll(() {
-      final json = jsonDecode(File('content/lessons/take-home-pay-001.json').readAsStringSync())
-          as Map<String, dynamic>;
-      lesson = Lesson.fromJson(json);
+      lesson = loadJson('content/lessons/take-home-pay-001.json', Lesson.fromJson);
+      // 実際の content/tracks/takehome-tax.json を読み込む。このテストは
+      // take-home-pay-001 だけを見るため、他のレッスンは完了済みとして扱う
+      // （下記 completedLessonIds 参照）。
+      track = loadJson('content/tracks/takehome-tax.json', Track.fromJson);
     });
-
-    final track = Track(
-      trackId: 'takehome-tax',
-      genreId: 'okane',
-      name: '手取りと税金・社会保険',
-      order: 1,
-      lessonIds: ['take-home-pay-001'],
-    );
 
     test('レッスン自体は鮮度OKで配信可能（kind=predict・rank=mid）', () {
       final now = DateTime(2026, 10, 20);
@@ -48,14 +48,14 @@ void main() {
     );
 
     test(
-      'isCalcDeliverableAtを渡すと、calcIdのCalculatorが実際には配信可能なため選ばれる'
-      '（take-home-payの基礎控除は令和8年度改正の段階制で再実装済み。'
-      '扶養控除等が未検証のため依然 parametersValidAt は false だが、'
-      'isFullyDeliverableAt は鮮度のみを見るisDeliverableAtとは異なり両方を合成する）',
+      'isCalcDeliverableAtを渡すと、calcIdのCalculatorの実際の配信可否で判定される'
+      '（take-home-payは基礎控除・扶養控除の区分別実装により全Parameterが'
+      '検証済みになったため、isFullyDeliverableAtもtrueになり選ばれる）',
       () {
         final now = DateTime(2026, 10, 20);
         final calculator = TakeHomePayCalculator();
         expect(calculator.calcId, lesson.calcId);
+        expect(calculator.isFullyDeliverableAt(now), isTrue);
 
         final pick = DailyPickSelector.pick(
           tracks: [track],
@@ -70,9 +70,28 @@ void main() {
           },
         );
 
-        // 扶養控除・住民税均等割がまだ未検証のため、このCalculatorは
-        // 現時点では isFullyDeliverableAt が false になる。
-        expect(calculator.isFullyDeliverableAt(now), isFalse);
+        expect(pick, isNotNull);
+        expect(pick!.lesson.lessonId, 'take-home-pay-001');
+      },
+    );
+
+    test(
+      'Calculatorが配信不可であればisCalcDeliverableAtを渡すとそのレッスンはスキップされる'
+      '（このトラックには他に代替レッスンがないためpickはnullになる、という'
+      '合成ロジック自体の確認）',
+      () {
+        final now = DateTime(2026, 10, 20);
+
+        final pick = DailyPickSelector.pick(
+          tracks: [track],
+          lessonsById: {lesson.lessonId: lesson},
+          completedLessonIds: {},
+          srsItems: const [],
+          quizById: {},
+          now: now,
+          isCalcDeliverableAt: (calcId, now) => false,
+        );
+
         expect(pick, isNull, reason: 'このトラックには他に代替レッスンがないため');
       },
     );

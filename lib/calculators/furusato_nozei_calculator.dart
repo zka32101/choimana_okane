@@ -35,11 +35,11 @@ class FurusatoNozeiCalculator extends Calculator {
               title: 'ふるさと納税のしくみ（控除上限額の近似式）',
               url: 'https://www.soumu.go.jp/',
               publisher: '総務省',
-              retrievedAt: DateTime(2026, 1, 1),
+              retrievedAt: DateTime(2026, 10, 14),
               category: SourceCategory.aux,
             ),
           ],
-          reviewedAt: DateTime(2026, 1, 1),
+          reviewedAt: DateTime(2026, 10, 14),
         );
 
   final TakeHomePayCalculator _takeHomePay;

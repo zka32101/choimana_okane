@@ -1,0 +1,11 @@
+{
+  "trackId": "takehome-tax",
+  "genreId": "okane",
+  "name": "手取りと税金・社会保険",
+  "order": 1,
+  "lessonIds": [
+    "take-home-pay-001",
+    "furusato-nozei-001",
+    "furusato-nozei-002"
+  ]
+}

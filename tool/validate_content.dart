@@ -1,6 +1,6 @@
 /// 配信前CIで実行する検証コマンド（choimana_core の検証ロジックを使う）。
 /// `content/lessons/*.json`・`content/boundary_rules/*.json`・
-/// `content/glossary/*.json` を検証する。
+/// `content/glossary/*.json`・`content/tracks/*.json` を検証する。
 library;
 
 import 'dart:convert';
@@ -35,6 +35,7 @@ Future<void> main(List<String> args) async {
       await _loadAll(Directory('$root/boundary_rules'), BoundaryRule.fromJson, issues);
   final glossaryTerms =
       await _loadAll(Directory('$root/glossary'), GlossaryTerm.fromJson, issues);
+  final tracks = await _loadAll(Directory('$root/tracks'), Track.fromJson, issues);
 
   for (final lesson in lessons) {
     issues.addAll(validateLesson(lesson, now));
@@ -51,6 +52,7 @@ Future<void> main(List<String> args) async {
       boundaryRules: boundaryRules,
       glossaryTerms: glossaryTerms,
       knownCalcIds: _knownCalcIds,
+      tracks: tracks,
     ),
   );
 
@@ -58,7 +60,7 @@ Future<void> main(List<String> args) async {
     stderr.writeln(issue.toString());
   }
 
-  final checked = lessons.length + boundaryRules.length + glossaryTerms.length;
+  final checked = lessons.length + boundaryRules.length + glossaryTerms.length + tracks.length;
   final errorCount = issues.where((i) => i.level == IssueLevel.error).length;
   final warnCount = issues.length - errorCount;
   stdout.writeln('検証対象: $checked件 / エラー: $errorCount件 / 警告: $warnCount件');

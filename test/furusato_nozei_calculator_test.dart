@@ -16,8 +16,8 @@ void main() {
       expect(r.donationLimit, greaterThanOrEqualTo(2000));
     });
 
-    test('依存先（TakeHomePayCalculator）の定数が期限切れのため配信不可', () {
-      expect(calc.isFullyDeliverableAt(DateTime(2026, 10, 8)), isFalse);
+    test('依存先（TakeHomePayCalculator）の定数が出典確認済みになったため配信可能', () {
+      expect(calc.isFullyDeliverableAt(DateTime(2026, 10, 8)), isTrue);
     });
 
     test('choimana_core の Calculator 契約: compute() は控除上限額を返す', () {
