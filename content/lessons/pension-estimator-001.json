@@ -1,0 +1,59 @@
+{
+  "lessonId": "pension-estimator-001",
+  "trackId": "household-life-events",
+  "title": "将来もらえる年金、いくらくらい？",
+  "minutes": 3,
+  "kind": "predict",
+  "rank": "low",
+  "calcId": "pension-estimator",
+  "cards": [
+    {
+      "cardId": "c1",
+      "text": "年金は「老齢基礎年金（国民年金）」と「老齢厚生年金」の2階建て（目安）"
+    },
+    {
+      "cardId": "c2",
+      "text": "厚生年金は会社員・公務員のみに上乗せされ、自営業にはない（目安）"
+    },
+    {
+      "cardId": "c3",
+      "text": "受け取り開始を遅らせる（繰り下げ）ほど、1ヶ月あたりの年金額が増える（目安）"
+    }
+  ],
+  "quiz": [
+    {
+      "qid": "q1",
+      "type": "truefalse",
+      "stem": "自営業の人も老齢厚生年金を受け取れる",
+      "answer": "false",
+      "explain": "老齢厚生年金は会社員・公務員（厚生年金に加入している人）に上乗せされる部分で、自営業にはない（目安）",
+      "topicTag": "pension-basics"
+    },
+    {
+      "qid": "q2",
+      "type": "choice",
+      "stem": "年金の受け取り開始を遅らせる（繰り下げ）と、年金額はどうなる？",
+      "choices": ["減る", "増える（目安）", "変わらない"],
+      "answer": "1",
+      "explain": "繰り下げ受給は1ヶ月あたり0.7%年金額が増える仕組み（目安）",
+      "topicTag": "pension-basics"
+    }
+  ],
+  "action": {
+    "actionId": "a1",
+    "text": "自分の年収・加入年数で、将来もらえる年金額の目安を計算してみる",
+    "checklist": ["年金額の目安を確認した"]
+  },
+  "sources": [
+    {
+      "title": "令和8年4月分からの年金額等について",
+      "url": "https://www.nenkin.go.jp/oshirase/taisetu/kojin/2026/202604/0401.html",
+      "publisher": "日本年金機構",
+      "retrievedAt": "2026-10-13T00:00:00.000Z",
+      "category": "official"
+    }
+  ],
+  "lawVersion": "令和8年度（基礎年金満額）／令和4年4月以降（繰上げ繰下げ率）",
+  "reviewedAt": "2026-10-15T00:00:00.000Z",
+  "contentVer": "0.1.0"
+}

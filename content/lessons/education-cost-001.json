@@ -1,0 +1,59 @@
+{
+  "lessonId": "education-cost-001",
+  "trackId": "household-life-events",
+  "title": "子どもの教育費、大学までにいくら必要？",
+  "minutes": 3,
+  "kind": "predict",
+  "rank": "low",
+  "calcId": "education-cost",
+  "cards": [
+    {
+      "cardId": "c1",
+      "text": "幼稚園から高校まで、公立か私立かで教育費は大きく変わる（目安）"
+    },
+    {
+      "cardId": "c2",
+      "text": "大学費用はまとまった額が必要になるため、事前の積立計画が重要（目安）"
+    },
+    {
+      "cardId": "c3",
+      "text": "すでにある積立額を差し引いて、入学までに必要な月々の積立額の目安を計算できる"
+    }
+  ],
+  "quiz": [
+    {
+      "qid": "q1",
+      "type": "truefalse",
+      "stem": "教育費は公立・私立で金額の差がほとんどない",
+      "answer": "false",
+      "explain": "特に小学校では公立と私立で教育費の差が大きくなる（目安）",
+      "topicTag": "education-cost-basics"
+    },
+    {
+      "qid": "q2",
+      "type": "choice",
+      "stem": "この計算機で、まとまった積立が特に必要とされる段階はどれ？",
+      "choices": ["幼稚園", "大学", "中学校"],
+      "answer": "1",
+      "explain": "大学費用は他の段階より一度に必要な額が大きく、事前の積立計画が重要（目安）",
+      "topicTag": "education-cost-basics"
+    }
+  ],
+  "action": {
+    "actionId": "a1",
+    "text": "子どもの年齢と希望する進路で、大学入学までの積立額の目安を計算してみる",
+    "checklist": ["積立額の目安を確認した"]
+  },
+  "sources": [
+    {
+      "title": "令和5年度子供の学習費調査結果のポイント（幼稚園〜高校の学習費総額）",
+      "url": "https://www.mext.go.jp/content/20260116-mxt_chousa01-000039333_1.pdf",
+      "publisher": "文部科学省",
+      "retrievedAt": "2026-10-13T00:00:00.000Z",
+      "category": "official"
+    }
+  ],
+  "lawVersion": "令和5年度子供の学習費調査（文部科学省。概ね2年おきに調査・公表）",
+  "reviewedAt": "2026-10-15T00:00:00.000Z",
+  "contentVer": "0.1.0"
+}

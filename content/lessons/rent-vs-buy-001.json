@@ -1,0 +1,54 @@
+{
+  "lessonId": "rent-vs-buy-001",
+  "trackId": "household-life-events",
+  "title": "住宅、賃貸と購入どっちが得？",
+  "minutes": 3,
+  "kind": "predict",
+  "rank": "low",
+  "calcId": "rent-vs-buy",
+  "cards": [
+    {
+      "cardId": "c1",
+      "text": "賃貸は家賃の累計、購入は頭金・ローン返済・税・維持費の累計で比較する（目安）"
+    },
+    {
+      "cardId": "c2",
+      "text": "比較期間を長くするほど、購入側の累計コストが賃貸を下回る年が見えてくる（目安）"
+    },
+    {
+      "cardId": "c3",
+      "text": "この比較は支払い総額のみで、購入後に残る不動産という資産の価値（値上がり・値下がり）は考慮していない"
+    }
+  ],
+  "quiz": [
+    {
+      "qid": "q1",
+      "type": "truefalse",
+      "stem": "賃貸と購入の比較では、どちらが得かを一つの答えとして断定できる",
+      "answer": "false",
+      "explain": "金利・家賃の上昇率・住む年数などの前提によって結果は変わるため、あくまで目安の比較",
+      "topicTag": "rent-vs-buy-basics"
+    },
+    {
+      "qid": "q2",
+      "type": "choice",
+      "stem": "この比較に含まれていないものはどれ？",
+      "choices": ["ローンの金利負担", "家賃の上昇", "購入後の不動産の資産価値"],
+      "answer": "2",
+      "explain": "この比較は支払い総額のみを見るもので、購入後に残る不動産の資産価値の変動は含まれていない",
+      "topicTag": "rent-vs-buy-basics"
+    }
+  ],
+  "sources": [
+    {
+      "title": "住宅購入・賃貸の比較の考え方（一般的な金融知識）",
+      "url": "https://www.fsa.go.jp/",
+      "publisher": "金融庁（一般的な考え方の参考。個別の計算式の出典ではない）",
+      "retrievedAt": "2026-01-01T00:00:00.000Z",
+      "category": "aux"
+    }
+  ],
+  "lawVersion": "一般的な金融知識（制度に基づく数値ではない）",
+  "reviewedAt": "2026-10-15T00:00:00.000Z",
+  "contentVer": "0.1.0"
+}

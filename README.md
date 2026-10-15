@@ -107,6 +107,16 @@ furusato_nozei・pension_estimator・education_cost・nisa・idecoの全てで
      `validateCrossReferences`の`tracks`パラメータで参照整合性・重複IDを検証）。
      `take-home-pay-001 → furusato-nozei-001 → furusato-nozei-002`の順。
      `daily_pick_wiring_test.dart`もハードコードのTrackから実際のJSON読み込みに変更した
+   - `content/tracks/household-life-events.json`（2トラック目）— 既に出典確認済みだった
+     `emergency-fund`/`insurance-coverage`/`rent-vs-buy`/`pension-estimator`/`education-cost`
+     の5本の計算機を使うレッスンを作成（`emergency-fund-001`・`insurance-coverage-001`・
+     `rent-vs-buy-001`・`pension-estimator-001`・`education-cost-001`）。これでMVPの3トラック
+     構成のうち2トラック・8レッスンが揃った（残りは「お金のトラブル・詐欺」トラック）
+   - `test/srs_wiring_test.dart` — `content/lessons`の実データ（Quiz）とSrs・DailyPickSelectorを
+     結合して確認した。発見: `DailyPickSelector.pick()`は「今日の1レッスン」が1つも選べないと
+     （トラック内が全て完了済み等）、復習期日が来た問題があってもreviewQuiz自体を判定せず
+     `null`を返す仕様になっている（既存のdaily_pick.dart実装通りで、バグではないが把握しておくべき
+     既存の挙動としてテストで明示した）
 
 ## 注意: kinnyu リポジトリの公開リスク（既知・未対応）
 

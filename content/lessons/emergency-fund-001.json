@@ -1,0 +1,60 @@
+{
+  "lessonId": "emergency-fund-001",
+  "trackId": "household-life-events",
+  "title": "生活防衛資金、いくら貯めておけばいい？",
+  "minutes": 3,
+  "kind": "predict",
+  "rank": "low",
+  "calcId": "emergency-fund",
+  "cards": [
+    {
+      "cardId": "c1",
+      "text": "生活防衛資金は、失業や病気など不測の事態に備える現金",
+      "termRefs": ["g_emergency_fund"]
+    },
+    {
+      "cardId": "c2",
+      "text": "目安は毎月の必要生活費の3〜6ヶ月分（会社員）〜12ヶ月分（自営業）（目安）"
+    },
+    {
+      "cardId": "c3",
+      "text": "目標額と今の積立額から、あと何ヶ月で貯まるかの目安を計算できる"
+    }
+  ],
+  "quiz": [
+    {
+      "qid": "q1",
+      "type": "truefalse",
+      "stem": "生活防衛資金は投資に回すお金として使う",
+      "answer": "false",
+      "explain": "生活防衛資金は不測の事態に備える現金であり、投資とは分けて考える（目安）",
+      "topicTag": "emergency-fund-basics"
+    },
+    {
+      "qid": "q2",
+      "type": "choice",
+      "stem": "自営業の人の生活防衛資金の目安は、会社員と比べてどうなる？",
+      "choices": ["少なくて済む", "多めに必要（目安）", "変わらない"],
+      "answer": "1",
+      "explain": "収入が不安定になりやすいため、自営業は会社員より多め（12ヶ月分程度）が目安とされる",
+      "topicTag": "emergency-fund-basics"
+    }
+  ],
+  "action": {
+    "actionId": "a1",
+    "text": "自分の毎月の必要生活費から、生活防衛資金の目標額の目安を計算してみる",
+    "checklist": ["目標額の目安を計算した"]
+  },
+  "sources": [
+    {
+      "title": "生活防衛資金の考え方（一般的な金融知識）",
+      "url": "https://www.fsa.go.jp/",
+      "publisher": "金融庁（一般的な考え方の参考。個別の計算式の出典ではない）",
+      "retrievedAt": "2026-01-01T00:00:00.000Z",
+      "category": "aux"
+    }
+  ],
+  "lawVersion": "一般的な金融知識（制度に基づく数値ではない）",
+  "reviewedAt": "2026-10-15T00:00:00.000Z",
+  "contentVer": "0.1.0"
+}

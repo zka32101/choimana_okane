@@ -1,0 +1,13 @@
+{
+  "trackId": "household-life-events",
+  "genreId": "okane",
+  "name": "家計とライフイベント",
+  "order": 2,
+  "lessonIds": [
+    "emergency-fund-001",
+    "insurance-coverage-001",
+    "rent-vs-buy-001",
+    "pension-estimator-001",
+    "education-cost-001"
+  ]
+}

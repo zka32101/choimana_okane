@@ -1,0 +1,55 @@
+{
+  "lessonId": "insurance-coverage-001",
+  "trackId": "household-life-events",
+  "title": "生命保険、本当はいくら必要？",
+  "minutes": 3,
+  "kind": "predict",
+  "rank": "low",
+  "calcId": "insurance-coverage",
+  "cards": [
+    {
+      "cardId": "c1",
+      "text": "必要保障額は「残された家族の生活費総額」から「遺族年金や資産」を引いた不足分（目安）"
+    },
+    {
+      "cardId": "c2",
+      "text": "遺族年金や配偶者の収入が多いほど、必要な保険金額は小さくなる（目安）",
+      "termRefs": ["g_shakai_hoken"]
+    },
+    {
+      "cardId": "c3",
+      "text": "すでにある金融資産も、保険で備える額から差し引いて考える（目安）"
+    }
+  ],
+  "quiz": [
+    {
+      "qid": "q1",
+      "type": "truefalse",
+      "stem": "必要な保険金額は、家族構成や資産状況に関わらず誰でも同じ目安になる",
+      "answer": "false",
+      "explain": "必要保障額は生活費・遺族年金・資産・配偶者の収入によって人ごとに変わる（目安）",
+      "topicTag": "insurance-basics"
+    },
+    {
+      "qid": "q2",
+      "type": "choice",
+      "stem": "金融資産（貯金）が多い人ほど、必要な保険金額の目安はどうなる？",
+      "choices": ["大きくなる", "小さくなる（目安）", "変わらない"],
+      "answer": "1",
+      "explain": "資産が多いほど保険でカバーする不足分が減るため、必要保障額は小さくなる（目安）",
+      "topicTag": "insurance-basics"
+    }
+  ],
+  "sources": [
+    {
+      "title": "必要保障額の考え方（一般的な金融知識）",
+      "url": "https://www.fsa.go.jp/",
+      "publisher": "金融庁（一般的な考え方の参考。個別の計算式の出典ではない）",
+      "retrievedAt": "2026-01-01T00:00:00.000Z",
+      "category": "aux"
+    }
+  ],
+  "lawVersion": "一般的な金融知識（制度に基づく数値ではない）",
+  "reviewedAt": "2026-10-15T00:00:00.000Z",
+  "contentVer": "0.1.0"
+}
