@@ -13,6 +13,24 @@ choimana_okane（このリポジトリ）
 
 既存アプリ `kinnyu`（アプリ名「金融・家計学校」）は廃止し、本リポジトリを新規に立てる方針（2026-10-07決定）。
 
+## Flutterアプリ本体の構築フェーズで使う既存パッケージ（調査済み・2026-10-18）
+
+choimana_okane / choimana_core は意図的に**pure Dart**（Flutter非依存）で作っているため、
+`flutter: sdk: flutter` に依存する以下のパッケージは直接は依存に加えられない。
+今後、choimana_okaneのビジネスロジックを使う**実際のFlutterアプリ本体**を作る段階で
+利用を検討する:
+
+- [`app_common_kit`](https://github.com/zka32101/app_common_kit)（v3.11.0）— Petit Works Apps
+  全体で使う共通UI（設定画面 `SettingsScreen`・アプリ内レビュー依頼 `ReviewPromptService` 等）。
+  choimana の依存の向き図で「フィードバック・権利・広告ゲート・テーマ・UI」の役割として
+  既に位置づけ済み
+- [`cross_promo_kit`](https://github.com/zka32101/cross_promo_kit)（v0.3.0）— 他アプリ紹介UI
+  （`firebase_remote_config` + `url_launcher` のみに依存）。掲載リスト
+  （`docs/cross_promo_apps.json`）は現在空なので、choimanaシリーズの各アプリをここに
+  追加するのはアプリ本体が揃ってからの作業になる
+
+両方ともタグ（`ref: vX.Y.Z`）固定での利用が前提（`main` 参照は不可）。
+
 ## v0.1の状態
 
 - `choimana_core` への依存を commit 固定で配線済み（スモークテストで確認）
